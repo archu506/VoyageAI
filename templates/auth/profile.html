@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Adaptive Travel Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2em;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .pref-item {
+            margin-bottom: 20px;
+        }
+        
+        .pref-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .pref-value {
+            color: #666;
+            font-size: 1.1em;
+            display: inline-block;
+            background: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        .pref-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-top: 8px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .trips-section {
+            grid-column: 1 / -1;
+        }
+        
+        .trip-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .trip-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+        
+        .trip-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .trip-city {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .trip-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .trip-mood {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .mood-happy {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .mood-neutral {
+            background: #fff9c4;
+            color: #f57f17;
+        }
+        
+        .mood-exhausted {
+            background: #ffccbc;
+            color: #d84315;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-state p {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🌍 My Profile</h1>
+                <p style="color: #666; margin-top: 5px;">Welcome back, <strong>{{ current_user.username }}</strong></p>
+            </div>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="card" style="background: #c8e6c9; border-left: 4px solid #2e7d32; margin-bottom: 20px;">
+                    {% for category, message in messages %}
+                        <p style="color: #1b5e20;">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="grid">
+            <!-- Preferences Card -->
+            <div class="card">
+                <h2>Your Preferences</h2>
+                <form method="POST" action="{{ url_for('auth.save_preferences') }}">
+                    <div class="pref-item">
+                        <label class="pref-label">Energy Level</label>
+                        <input type="range" name="energy" min="1" max="100" value="{{ current_user.energy_level or 50 }}" id="energy-slider">
+                        <span class="pref-value" id="energy-value">{{ current_user.energy_level or 50 }}%</span>
+                    </div>
+                    
+                    <div class="pref-item">
+                        <label class="pref-label">Crowd Tolerance</label>
+                        <input type="range" name="crowd_tolerance" min="1" max="100" value="{{ current_user.crowd_tolerance or 50 }}" id="crowd-slider">
+                        <span class="pref-value" id="crowd-value">{{ current_user.crowd_tolerance or 50 }}%</span>
+                    </div>
+                    
+                    <div class="pref-item">
+                        <label class="pref-label">Current Mood</label>
+                        <select name="mood" class="pref-input">
+                            <option value="happy" {% if current_user.mood == 'happy' %}selected{% endif %}>Happy & Energetic</option>
+                            <option value="neutral" {% if current_user.mood == 'neutral' %}selected{% endif %}>Neutral & Balanced</option>
+                            <option value="exhausted" {% if current_user.mood == 'exhausted' %}selected{% endif %}>Tired & Relaxed</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn">Save Preferences</button>
+                </form>
+            </div>
+            
+            <!-- Stats Card -->
+            <div class="card">
+                <h2>Your Stats</h2>
+                <div class="pref-item">
+                    <span class="pref-label">Total Trips Planned</span>
+                    <span class="pref-value" style="font-size: 1.4em;">{{ trips|length }}</span>
+                </div>
+                <div class="pref-item">
+                    <span class="pref-label">Favorite City</span>
+                    <span class="pref-value">
+                        {% if favorite_city %}
+                            {{ favorite_city }}
+                        {% else %}
+                            No trips yet
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="pref-item">
+                    <span class="pref-label">Member Since</span>
+                    <span class="pref-value">{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'Recently' }}</span>
+                </div>
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee;">
+                    <p style="color: #666; font-size: 0.9em;">
+                        Your data is secure and never shared. Learn more about our <a href="#" style="color: #667eea;">privacy policy</a>.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Saved Trips -->
+            <div class="card trips-section">
+                <h2>Saved Trips</h2>
+                {% if trips %}
+                    <div class="trip-list">
+                        {% for trip in trips %}
+                            <div class="trip-card">
+                                <div class="trip-city">{{ trip.city }}</div>
+                                <div class="trip-meta">
+                                    <strong>Planned for:</strong> {{ trip.timestamp.strftime('%B %d, %Y') }}
+                                </div>
+                                <div class="trip-meta">
+                                    <strong>Attractions:</strong> 
+                                    {% set attractions = trip.itinerary|list %}
+                                    {{ attractions|length }}
+                                </div>
+                                <span class="trip-mood {% if trip.mood == 'Happy' %}mood-happy{% elif trip.mood == 'Neutral' %}mood-neutral{% else %}mood-exhausted{% endif %}">
+                                    {{ trip.mood or 'Neutral' }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <p>📍 No trips planned yet</p>
+                        <p style="color: #999; font-size: 1em;">Start by planning your first adventure!</p>
+                        <a href="{{ url_for('reload_plan', city='Jaipur') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">Plan a Trip →</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Update energy level display
+        const energySlider = document.getElementById('energy-slider');
+        const energyValue = document.getElementById('energy-value');
+        if (energySlider) {
+            energySlider.addEventListener('input', function() {
+                energyValue.textContent = this.value + '%';
+            });
+        }
+        
+        // Update crowd tolerance display
+        const crowdSlider = document.getElementById('crowd-slider');
+        const crowdValue = document.getElementById('crowd-value');
+        if (crowdSlider) {
+            crowdSlider.addEventListener('input', function() {
+                crowdValue.textContent = this.value + '%';
+            });
+        }
+    </script>
+</body>
+</html>

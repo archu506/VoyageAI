@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <h1>Plan Your Perfect Jaipur Day</h1>
+    <p>Select attractions and let our AI adapt your itinerary based on weather, crowds, and air quality</p>
+</div>
+
+<div class="main-container">
+    <!-- Left Panel: Attractions Selection -->
+    <div class="left-panel">
+        <section class="attractions-section">
+            <h2>🏛️ Select Attractions</h2>
+            <p class="section-info">Choose which attractions you'd like to visit</p>
+            
+            <div id="attractionsList" class="attractions-list">
+                <!-- Populated by JavaScript -->
+            </div>
+            
+            <button id="generateBtn" class="btn btn-primary btn-large">
+                🚀 Generate Adapted Plan
+            </button>
+        </section>
+    </div>
+
+    <!-- Right Panel: Conditions Selection -->
+    <div class="right-panel">
+        <section class="conditions-section">
+            <h2>⚡ Current Conditions</h2>
+            <p class="section-info">Define the environmental factors</p>
+            
+            <!-- Weather Section (Live from API) -->
+            <div class="condition-group">
+                <label class="condition-label">🌤️ Live Weather for Jaipur</label>
+                <div class="live-weather-section">
+                    <div id="weatherDisplay" class="weather-display">
+                        <div class="weather-loading">Loading live weather...</div>
+                    </div>
+                    <div id="weatherStatus" style="font-size: 12px; color: #7F8C8D; margin-top: 8px; text-align: center;">
+                        <!-- Data source indicator -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Crowd Level Section -->
+            <div class="condition-group">
+                <label class="condition-label">👥 Expected Crowds</label>
+                <div class="crowd-select">
+                    <label class="radio-label">
+                        <input type="radio" name="crowd" value="low" checked>
+                        Low <span class="level-badge low">◷ Quiet</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="crowd" value="medium">
+                        Medium <span class="level-badge medium">◷ Normal</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="crowd" value="high">
+                        High <span class="level-badge high">◷ Busy</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- AQI Section -->
+            <div class="condition-group">
+                <label class="condition-label">💨 Air Quality (AQI)</label>
+                <div class="aqi-section">
+                    <input type="range" id="aqiSlider" name="aqi" min="0" max="500" value="150" class="slider">
+                    <div class="aqi-info">
+                        <span class="aqi-value">AQI: <strong id="aqiValue">150</strong></span>
+                        <span class="aqi-status" id="aqiStatus">Moderately Polluted</span>
+                    </div>
+                </div>
+                <div class="aqi-scale">
+                    <span class="scale-item good">Good (0-50)</span>
+                    <span class="scale-item satisfactory">Satisfactory (51-100)</span>
+                    <span class="scale-item moderate">Moderate (101-200)</span>
+                    <span class="scale-item poor">Poor (201-300)</span>
+                    <span class="scale-item very-poor">Very Poor (300+)</span>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div id="resultsSection" class="results-section" style="display: none;">
+    <div class="results-container">
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="card energy-card">
+                <h3>⚡ Energy Level</h3>
+                <div class="energy-display">
+                    <div class="energy-bar">
+                        <div id="energyFill" class="energy-fill"></div>
+                    </div>
+                    <p id="energyScore">100/100</p>
+                </div>
+            </div>
+            
+            <div class="card conditions-card">
+                <h3>🌍 Conditions</h3>
+                <div id="conditionsSummary">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Changes Alert -->
+        <div id="changesAlert" class="alert" style="display: none;">
+            <h3>📋 Changes Made</h3>
+            <ul id="changesList"></ul>
+        </div>
+
+        <!-- Recommendations -->
+        <div id="recommendationsSection" class="recommendations-section" style="display: none;">
+            <h3>💡 Smart Recommendations</h3>
+            <div id="recommendationsList" class="recommendations-list">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Original vs Adapted Comparison -->
+        <div class="comparison-section">
+            <div class="plan-column">
+                <h3>📌 Original Plan</h3>
+                <div id="originalPlan" class="plan-list">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="arrow-divider">↓ Adapted ↓</div>
+            
+            <div class="plan-column">
+                <h3>✅ Adapted Plan</h3>
+                <div id="adaptedPlan" class="plan-list">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-section">
+            <h3>⏱️ Detailed Timeline</h3>
+            <div id="timelineList" class="timeline-list">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <button class="btn btn-secondary" onclick="location.reload()">
+            🔄 Plan Another Day
+        </button>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="spinner-overlay" style="display: none;">
+    <div class="spinner">
+        <div class="spin"></div>
+        <p>Generating your adapted plan...</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ATTRACTIONS = {{ attractions | tojson }};
+
+// Initialize attraction list
+function initializeAttractions() {
+    const container = document.getElementById('attractionsList');
+    container.innerHTML = '';
+    
+    ATTRACTIONS.forEach(attr => {
+        const div = document.createElement('div');
+        div.className = 'attraction-item';
+        div.innerHTML = `
+            <label class="attraction-label">
+                <input type="checkbox" class="attraction-checkbox" value="${attr.id}">
+                <div class="attraction-content">
+                    <h4>${attr.name}</h4>
+                    <p>${attr.description}</p>
+                    <div class="attraction-meta">
+                        <span class="tag type-${attr.type}">${attr.type}</span>
+                        <span class="tag duration">⏱️ ${attr.duration}m</span>
+                        <span class="tag energy">⚡ ${attr.base_energy_cost}</span>
+                        <span class="tag popularity">📊 ${attr.popularity}</span>
+                    </div>
+                </div>
+            </label>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Fetch and display live weather
+async function loadLiveWeather() {
+    try {
+        const response = await fetch('/api/weather');
+        if (!response.ok) {
+            throw new Error('Failed to fetch weather');
+        }
+        
+        const weather = await response.json();
+        displayWeather(weather);
+    } catch (error) {
+        console.error('Weather fetch error:', error);
+        // Show fallback message
+        document.getElementById('weatherDisplay').innerHTML = `
+            <div class="weather-fallback">
+                <div style="font-size: 24px;">⚠️</div>
+                <div style="font-size: 14px; margin-top: 5px;">Unable to fetch live weather</div>
+                <div style="font-size: 11px; color: #7F8C8D; margin-top: 3px;">Using standard forecast mode</div>
+            </div>
+        `;
+    }
+}
+
+// Display weather information
+function displayWeather(weather) {
+    const weatherEmoji = weather.is_raining ? '🌧️' : '☀️';
+    const sourceText = weather.source === 'openweathermap' ? 'Live Data' : 'Forecast Mode';
+    
+    const weatherHTML = `
+        <div class="weather-info">
+            <div class="weather-main">
+                <span class="weather-emoji">${weatherEmoji}</span>
+                <span class="weather-temp">${weather.temperature}°C</span>
+            </div>
+            <div class="weather-details">
+                <div class="weather-condition">${weather.condition}</div>
+                <div class="weather-humidity">💧 Humidity: ${weather.humidity}%</div>
+                <div class="weather-status">${weather.is_raining ? '🌧️ Rain Expected' : '☀️ No Rain'}</div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('weatherDisplay').innerHTML = weatherHTML;
+    document.getElementById('weatherStatus').textContent = `✓ Data Source: ${sourceText}`;
+}
+
+// AQI Slider Update
+document.getElementById('aqiSlider').addEventListener('input', function() {
+    const value = parseInt(this.value);
+    document.getElementById('aqiValue').textContent = value;
+    
+    let status = '';
+    let className = '';
+    if (value <= 50) {
+        status = 'Good';
+        className = 'good';
+    } else if (value <= 100) {
+        status = 'Satisfactory';
+        className = 'satisfactory';
+    } else if (value <= 200) {
+        status = 'Moderately Polluted';
+        className = 'moderate';
+    } else if (value <= 300) {
+        status = 'Poor';
+        className = 'poor';
+    } else {
+        status = 'Very Poor';
+        className = 'very-poor';
+    }
+    
+    const statusEl = document.getElementById('aqiStatus');
+    statusEl.textContent = status;
+    statusEl.className = 'aqi-status ' + className;
+});
+
+// Generate Plan Button
+document.getElementById('generateBtn').addEventListener('click', async function() {
+    const selectedCheckboxes = document.querySelectorAll('.attraction-checkbox:checked');
+    const selectedAttractionsIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
+    
+    if (selectedAttractionsIds.length === 0) {
+        alert('Please select at least one attraction!');
+        return;
+    }
+    
+    const crowdLevel = document.querySelector('input[name="crowd"]:checked').value;
+    const aqiLevel = parseInt(document.getElementById('aqiSlider').value);
+    
+    // Show loading spinner
+    document.getElementById('loadingSpinner').style.display = 'flex';
+    
+    try {
+        const response = await fetch('/api/adapt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                selected_attractions: selectedAttractionsIds,
+                crowd_level: crowdLevel,
+                aqi_level: aqiLevel
+                // Weather is now fetched live server-side
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to generate plan');
+        }
+        
+        const result = await response.json();
+        displayResults(result);
+        
+    } catch (error) {
+        alert('Error generating plan: ' + error.message);
+    } finally {
+        document.getElementById('loadingSpinner').style.display = 'none';
+    }
+});
+
+// Display Results
+function displayResults(result) {
+    // Energy Display
+    const energyRemaining = result.energy_remaining;
+    const energyPercent = Math.max(0, (energyRemaining / 100) * 100);
+    document.getElementById('energyFill').style.width = energyPercent + '%';
+    document.getElementById('energyScore').textContent = `${energyRemaining}/100`;
+    
+    // Conditions Summary
+    const conditionsSummary = document.getElementById('conditionsSummary');
+    const weatherEmoji = result.weather.is_raining ? '🌧️ Raining' : '☀️ Clear';
+    const weatherTemp = result.weather.temperature ? `${result.weather.temperature}°C` : '';
+    const crowdEmoji = result.conditions.crowd_level === 'low' ? '✅' : result.conditions.crowd_level === 'medium' ? '⚠️' : '🔴';
+    
+    conditionsSummary.innerHTML = `
+        <div class="condition-row">
+            <span>${weatherEmoji} ${weatherTemp}</span>
+        </div>
+        <div class="condition-row">
+            <span>${crowdEmoji} Crowd: ${result.conditions.crowd_level.charAt(0).toUpperCase() + result.conditions.crowd_level.slice(1)}</span>
+        </div>
+        <div class="condition-row">
+            <span>💨 AQI: ${result.conditions.aqi_level} (${result.conditions.aqi_classification})</span>
+        </div>
+    `;
+    
+    // Explanations Section
+    if (result.explanations && result.explanations.length > 0) {
+        document.getElementById('changesAlert').style.display = 'block';
+        const changesList = document.getElementById('changesList');
+        changesList.innerHTML = result.explanations.map(expl => `<li>${expl}</li>`).join('');
+    } else {
+        document.getElementById('changesAlert').style.display = 'none';
+    }
+    
+    // Recommendations (Removed attractions notification)
+    const hasRemovals = result.removed_attractions && result.removed_attractions.length > 0;
+    if (hasRemovals) {
+        document.getElementById('recommendationsSection').style.display = 'block';
+        const recList = document.getElementById('recommendationsList');
+        const removalNotif = result.removed_attractions
+            .map(attr => `<strong>${attr.name}</strong> (Energy cost: ${attr.base_energy_cost})`)
+            .join(', ');
+        recList.innerHTML = `<div class="recommendation-item">⚠️ <strong>Removed due to energy constraints:</strong> ${removalNotif}</div>`;
+    } else {
+        document.getElementById('recommendationsSection').style.display = 'none';
+    }
+    
+    // Original Plan with Scoring Info
+    const originalPlanDiv = document.getElementById('originalPlan');
+    originalPlanDiv.innerHTML = result.original_plan.map((attr, idx) => {
+        const scoring = result.scoring_details[attr.name];
+        const scoreHint = scoring ? `(Score: ${scoring.base + scoring.adjustments})` : '';
+        return `
+            <div class="plan-item">
+                <span class="plan-number">${idx + 1}</span>
+                <div class="plan-details">
+                    <h4>${attr.name}</h4>
+                    <p>${attr.description}</p>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
+                        <span class="tag type-${attr.type}">${attr.type}</span>
+                        <span class="tag energy">⚡ ${attr.base_energy_cost}</span>
+                        <span class="tag popularity">📊 ${attr.popularity}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Adapted Plan (Reordered by Score)
+    const adaptedPlanDiv = document.getElementById('adaptedPlan');
+    adaptedPlanDiv.innerHTML = result.adapted_plan.map((attr, idx) => {
+        const scoring = result.scoring_details[attr.name];
+        const finalScore = scoring ? (scoring.base + scoring.adjustments) : 0;
+        const scoreBar = Math.max(0, finalScore);
+        return `
+            <div class="plan-item ${result.schedule_modified ? 'modified' : ''}">
+                <span class="plan-number">${idx + 1}</span>
+                <div class="plan-details">
+                    <h4>${attr.name}</h4>
+                    <p>${attr.description}</p>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
+                        <span class="tag type-${attr.type}">${attr.type}</span>
+                        <span class="tag energy">⚡ ${attr.base_energy_cost}</span>
+                        <span class="tag popularity">📊 ${attr.popularity}</span>
+                    </div>
+                    <div class="score-indicator" style="margin-top: 8px;">
+                        <div style="font-size: 11px; color: #7F8C8D; margin-bottom: 4px;">Score: ${finalScore}</div>
+                        <div style="background: #ecf0f1; height: 4px; border-radius: 2px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); height: 100%; width: ${(scoreBar / 100) * 100}%;" ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Timeline
+    const timelineDiv = document.getElementById('timelineList');
+    timelineDiv.innerHTML = result.timeline.map(item => `
+        <div class="timeline-item">
+            <div class="timeline-time">${item.start} - ${item.end}</div>
+            <div class="timeline-content">
+                <h4>${item.order}. ${item.name}</h4>
+                <p>${item.description}</p>
+                <span class="tag duration">⏱️ ${item.duration} min</span>
+                <span class="tag" style="background: rgba(102, 126, 234, 0.2); color: #667eea;">Score: ${item.score}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    // Show results
+    document.getElementById('resultsSection').style.display = 'block';
+    document.querySelector('.main-container').style.display = 'none';
+    
+    // Scroll to results
+    setTimeout(() => {
+        document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAttractions();
+    loadLiveWeather();  // Fetch and display live weather
+});
+</script>
+{% endblock %}

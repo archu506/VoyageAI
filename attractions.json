@@ -1,0 +1,25 @@
+{
+  "Jaipur": {
+    "lat": 26.9124,
+    "lon": 75.7873,
+    "attractions": [
+      {"name": "Amber Fort", "type": "heritage", "indoor": 0.2, "physical_intensity": 8, "best_time": "morning", "aqi_sensitive": true, "weather_sensitive": true},
+      {"name": "Hawa Mahal", "type": "heritage", "indoor": 0.0, "physical_intensity": 5, "best_time": "morning", "aqi_sensitive": true, "weather_sensitive": true},
+      {"name": "City Palace", "type": "heritage", "indoor": 0.6, "physical_intensity": 4, "best_time": "afternoon", "aqi_sensitive": false, "weather_sensitive": false},
+      {"name": "Jantar Mantar", "type": "heritage", "indoor": 0.1, "physical_intensity": 6, "best_time": "morning", "aqi_sensitive": true, "weather_sensitive": true},
+      {"name": "Nahargarh Fort", "type": "adventure", "indoor": 0.0, "physical_intensity": 9, "best_time": "morning", "aqi_sensitive": true, "weather_sensitive": true},
+      {"name": "Chokhi Dhani", "type": "cultural", "indoor": 0.4, "physical_intensity": 3, "best_time": "evening", "aqi_sensitive": false, "weather_sensitive": false}
+    ]
+  },
+  "Goa": {
+    "lat": 15.2993,
+    "lon": 73.8243,
+    "attractions": [
+      {"name": "Baga Beach", "type": "beach", "indoor": 0.0, "physical_intensity": 4, "best_time": "morning", "aqi_sensitive": true, "weather_sensitive": true},
+      {"name": "Calangute Beach", "type": "beach", "indoor": 0.0, "physical_intensity": 3, "best_time": "afternoon", "aqi_sensitive": true, "weather_sensitive": true},
+      {"name": "Fort Aguada", "type": "heritage", "indoor": 0.3, "physical_intensity": 7, "best_time": "morning", "aqi_sensitive": false, "weather_sensitive": true},
+      {"name": "Dudhsagar Falls", "type": "adventure", "indoor": 0.0, "physical_intensity": 8, "best_time": "morning", "aqi_sensitive": true, "weather_sensitive": true},
+      {"name": "Basilica of Bom Jesus", "type": "heritage", "indoor": 0.9, "physical_intensity": 2, "best_time": "afternoon", "aqi_sensitive": false, "weather_sensitive": false}
+    ]
+  }
+}

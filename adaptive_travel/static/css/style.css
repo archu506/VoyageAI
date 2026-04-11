@@ -1,0 +1,1173 @@
+/* ============================================
+   Real-Time Adaptive Travel Brain - CSS
+   ============================================ */
+
+:root {
+    --primary-color: #FF6B6B;
+    --secondary-color: #4ECDC4;
+    --accent-color: #FFE66D;
+    --dark-bg: #2C3E50;
+    --light-bg: #ECF0F1;
+    --border-color: #BDC3C7;
+    --text-dark: #2C3E50;
+    --text-light: #7F8C8D;
+    --success-color: #27AE60;
+    --warning-color: #F39C12;
+    --danger-color: #E74C3C;
+    
+    --indoor-color: #3498DB;
+    --outdoor-color: #2ECC71;
+    
+    --aqi-good: #27AE60;
+    --aqi-satisfactory: #F39C12;
+    --aqi-moderate: #E67E22;
+    --aqi-poor: #E74C3C;
+    --aqi-very-poor: #8B0000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================
+   Navbar
+   ============================================ */
+.navbar {
+    background: linear-gradient(90deg, #2C3E50 0%, #34495E 100%);
+    color: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.tagline {
+    font-size: 14px;
+    opacity: 0.9;
+    color: #BDC3C7;
+}
+
+/* ============================================
+   Main Container
+   ============================================ */
+.container {
+    flex: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    width: 100%;
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+.hero-section {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.hero-section h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-section p {
+    font-size: 18px;
+    opacity: 0.95;
+}
+
+/* ============================================
+   Main Layout (Left & Right Panels)
+   ============================================ */
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.left-panel, .right-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   Attractions Section
+   ============================================ */
+.attractions-section h2,
+.conditions-section h2 {
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.section-info {
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.attractions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.attractions-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.attractions-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.attractions-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.attraction-item {
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.attraction-item:hover {
+    border-color: var(--secondary-color);
+    box-shadow: 0 2px 8px rgba(78, 205, 196, 0.2);
+}
+
+.attraction-label {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    cursor: pointer;
+    gap: 12px;
+}
+
+.attraction-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.attraction-label input[type="checkbox"]:checked + .attraction-content {
+    background: rgba(255, 107, 107, 0.05);
+}
+
+.attraction-content {
+    flex: 1;
+}
+
+.attraction-content h4 {
+    margin-bottom: 5px;
+    color: var(--text-dark);
+}
+
+.attraction-content p {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.attraction-meta {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.tag.type-indoor {
+    background: rgba(52, 152, 219, 0.2);
+    color: #2980B9;
+}
+
+.tag.type-outdoor {
+    background: rgba(46, 204, 113, 0.2);
+    color: #27AE60;
+}
+
+.tag.duration {
+    background: rgba(241, 196, 15, 0.2);
+    color: #D68910;
+}
+
+.tag.energy {
+    background: rgba(255, 107, 107, 0.2);
+    color: var(--primary-color);
+}
+
+.tag.popularity {
+    background: rgba(155, 89, 182, 0.2);
+    color: #8E44AD;
+}
+
+/* ============================================
+   Conditions Section
+   ============================================ */
+.condition-group {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.condition-group:last-child {
+    border-bottom: none;
+}
+
+.condition-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.toggle-group {
+    display: flex;
+    gap: 10px;
+}
+
+.toggle-label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-label input {
+    margin-right: 6px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.toggle-text {
+    padding: 8px 12px;
+    border: 2px solid #ecf0f1;
+    border-radius: 6px;
+    flex: 1;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.toggle-label input:checked + .toggle-text {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* ============================================
+   Live Weather Display
+   ============================================ */
+.live-weather-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    padding: 15px;
+    color: white;
+}
+
+.weather-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.weather-loading,
+.weather-fallback {
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+.weather-info {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.weather-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.weather-emoji {
+    font-size: 32px;
+}
+
+.weather-temp {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.weather-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.weather-condition {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.weather-humidity,
+.weather-status {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.crowd-select {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    border: 2px solid #ecf0f1;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.radio-label input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.radio-label input[type="radio"]:checked + span {
+    font-weight: 600;
+}
+
+.level-badge {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.level-badge.low {
+    background: rgba(39, 174, 96, 0.2);
+    color: #27AE60;
+}
+
+.level-badge.medium {
+    background: rgba(243, 156, 18, 0.2);
+    color: #D68910;
+}
+
+.level-badge.high {
+    background: rgba(231, 76, 60, 0.2);
+    color: #C0392B;
+}
+
+/* ============================================
+   AQI Section
+   ============================================ */
+.aqi-section {
+    margin-bottom: 15px;
+}
+
+.slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, 
+        var(--aqi-good) 0%, 
+        var(--aqi-satisfactory) 20%, 
+        var(--aqi-moderate) 40%, 
+        var(--aqi-poor) 70%, 
+        var(--aqi-very-poor) 100%);
+    outline: none;
+    -webkit-appearance: none;
+    margin-bottom: 12px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.aqi-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.aqi-value {
+    font-weight: 600;
+}
+
+.aqi-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.aqi-status.good {
+    background: rgba(39, 174, 96, 0.2);
+    color: #27AE60;
+}
+
+.aqi-status.satisfactory {
+    background: rgba(243, 156, 18, 0.2);
+    color: #D68910;
+}
+
+.aqi-status.moderate {
+    background: rgba(230, 126, 34, 0.2);
+    color: #D35400;
+}
+
+.aqi-status.poor {
+    background: rgba(231, 76, 60, 0.2);
+    color: #C0392B;
+}
+
+.aqi-status.very-poor {
+    background: rgba(139, 0, 0, 0.2);
+    color: #8B0000;
+}
+
+.aqi-scale {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 11px;
+}
+
+.scale-item {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.scale-item.good {
+    background: rgba(39, 174, 96, 0.2);
+    color: #27AE60;
+}
+
+.scale-item.satisfactory {
+    background: rgba(243, 156, 18, 0.2);
+    color: #D68910;
+}
+
+.scale-item.moderate {
+    background: rgba(230, 126, 34, 0.2);
+    color: #D35400;
+}
+
+.scale-item.poor {
+    background: rgba(231, 76, 60, 0.2);
+    color: #C0392B;
+}
+
+.scale-item.very-poor {
+    background: rgba(139, 0, 0, 0.2);
+    color: #8B0000;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #FF5252 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+}
+
+.btn-large {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+}
+
+/* ============================================
+   Results Section
+   ============================================ */
+.results-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.results-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   Summary Cards
+   ============================================ */
+.summary-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.energy-display {
+    text-align: center;
+}
+
+.energy-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.energy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+    transition: width 0.5s ease;
+}
+
+.energy-score {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.condition-row {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ============================================
+   Alert Section
+   ============================================ */
+.alert {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+    border-left: 4px solid var(--warning-color);
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+}
+
+.alert h3 {
+    color: var(--warning-color);
+    margin-bottom: 10px;
+}
+
+.alert ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.alert li {
+    padding: 5px 0;
+    color: var(--text-dark);
+    font-weight: 500;
+    padding-left: 24px;
+    position: relative;
+}
+
+.alert li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--warning-color);
+    font-weight: bold;
+}
+
+/* ============================================
+   Recommendations Section
+   ============================================ */
+.recommendations-section {
+    margin-bottom: 30px;
+}
+
+.recommendations-section h3 {
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.recommendations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recommendation-item {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border-left: 4px solid var(--success-color);
+    padding: 15px;
+    border-radius: 6px;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* ============================================
+   Comparison Section
+   ============================================ */
+.comparison-section {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+    align-items: flex-start;
+}
+
+.plan-column {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.plan-column h3 {
+    color: var(--text-dark);
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.plan-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    border: 2px solid #ecf0f1;
+    transition: all 0.3s ease;
+}
+
+.plan-item.modified {
+    border-color: var(--primary-color);
+    background: rgba(255, 107, 107, 0.05);
+}
+
+.plan-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.plan-details h4 {
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.plan-details p {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 6px;
+}
+
+.arrow-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* ============================================
+   Timeline Section
+   ============================================ */
+.timeline-section {
+    margin-bottom: 30px;
+}
+
+.timeline-section h3 {
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.timeline-list {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-list:before {
+    content: '';
+    position: absolute;
+    left: 40px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--primary-color);
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.timeline-item:before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 5px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 3px solid var(--primary-color);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.timeline-time {
+    width: 100px;
+    font-weight: 600;
+    color: var(--text-dark);
+    padding-top: 2px;
+}
+
+.timeline-content {
+    margin-left: 30px;
+    flex: 1;
+}
+
+.timeline-content h4 {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.timeline-content p {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.spinner {
+    text-align: center;
+    color: white;
+}
+
+.spin {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid white;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.footer {
+    background: linear-gradient(90deg, #2C3E50 0%, #34495E 100%);
+    color: #BDC3C7;
+    text-align: center;
+    padding: 20px;
+    margin-top: auto;
+    font-size: 12px;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 1024px) {
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .comparison-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .arrow-divider {
+        transform: rotate(90deg);
+    }
+    
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 15px;
+    }
+    
+    .hero-section h1 {
+        font-size: 28px;
+    }
+    
+    .left-panel, .right-panel {
+        padding: 20px;
+    }
+    
+    .attractions-list {
+        max-height: 400px;
+    }
+    
+    .timeline-list:before {
+        left: 30px;
+    }
+    
+    .timeline-item:before {
+        left: 18px;
+    }
+    
+    .timeline-time {
+        width: 80px;
+        font-size: 12px;
+    }
+    
+    .timeline-content {
+        margin-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section h1 {
+        font-size: 22px;
+    }
+    
+    .hero-section p {
+        font-size: 14px;
+    }
+    
+    .btn-large {
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .plan-column h3,
+    .recommendations-section h3,
+    .timeline-section h3 {
+        font-size: 14px;
+    }
+}
+
+/* ============================================
+   Navbar Menu & Buttons
+   ============================================ */
+.navbar-menu {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* ============================================
+   Modals
+   ============================================ */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+}
+
+/* ============================================
+   Auth Modal
+   ============================================ */
+.auth-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ECF0F1;
+}
+
+.auth-tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.auth-tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.auth-tab {
+    display: none;
+}
+
+.auth-tab.active {
+    display: block;
+}
+
+.auth-tab h2 {
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+.auth-tab form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-tab input {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.auth-tab input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(255, 107, 107, 0.3);
+}
+
+/* ============================================
+   Settings Modal
+   ============================================ */
+.settings-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ECF0F1;
+}
+
+.settings-section h3 {
+    margin-bottom: 15px;
+    color: var(--text-dark);
+    font-size: 16px;
+}
+
+.checkbox-label,
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    transition: color 0.3s ease;
+}
+
+.checkbox-label:hover,
+.radio-label:hover {
+    color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"],
+.checkbox-label input[type="radio"],
+.radio-label input[type="checkbox"],
+.radio-label input[type="radio"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+#settingsModal .btn {
+    width: 100%;
+}

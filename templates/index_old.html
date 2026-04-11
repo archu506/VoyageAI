@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Travel Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        
+        .card h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .slider-container {
+            padding: 10px 0;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #eee;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .slider-value {
+            text-align: center;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 8px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .weather-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .navbar-left {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .navbar-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+
+        .navbar-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .user-info span {
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255, 76, 76, 0.8);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 76, 76, 1);
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .login-container h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .login-container p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .login-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .login-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .weather-main {
+            font-size: 4em;
+            font-weight: 300;
+            margin: 20px 0;
+        }
+        
+        .weather-city {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .weather-condition {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .weather-detail {
+            text-align: center;
+        }
+        
+        .weather-detail-value {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        
+        .weather-detail-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .timeline {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+        
+        .timeline-time {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 60px;
+        }
+        
+        .timeline-content {
+            margin-left: 20px;
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .auth-tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .auth-tab {
+            display: none;
+        }
+
+        .auth-tab.active {
+            display: block;
+        }
+
+        .auth-tab h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .auth-tab form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .auth-tab input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .auth-tab input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .checkbox-label,
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .checkbox-label:hover,
+        .radio-label:hover {
+            color: #667eea;
+        }
+
+        .checkbox-label input[type="checkbox"],
+        .radio-label input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="navbar-left">🌍 Travel Planner</div>
+            <div class="navbar-right">
+                {% if current_user.is_authenticated %}
+                    <div class="user-info">
+                        <span>👤 {{ current_user.username }}</span>
+                        <form action="/auth/logout" method="POST" style="display: inline;">
+                            <button type="submit" class="logout-btn">Logout</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="/auth/login" class="navbar-link">Login</a>
+                    <a href="/auth/register" class="navbar-link">Register</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <header>
+            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <h1 style="font-size: 3em; font-weight: 700; letter-spacing: 2px; color: #fff; margin-bottom: 10px;">🌍 Adaptive Travel Planner</h1>
+                <p style="color: #f3f3f3; opacity: 0.95; font-size: 1.2em; margin-bottom: 10px;">Smart trip planning with real-time weather & air quality</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="max-width: 600px; margin: 0 auto 20px; padding: 15px 20px; border-radius: 8px; {% if category == 'error' %}background: #ffebee; color: #c62828; border-left: 4px solid #f44336;{% elif category == 'success' %}background: #e8f5e9; color: #2e7d32; border-left: 4px solid #4caf50;{% else %}background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3;{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </header>
+
+        {% if not current_user.is_authenticated %}
+            <!-- Login Prompt -->
+            <div class="login-container">
+                <h2>🔐 Welcome to Smart Travel Planning</h2>
+                <p>Please log in or create an account to start planning your trips</p>
+                <div class="login-buttons">
+                    <button class="login-btn login-primary" onclick="window.location.href='/auth/login'">Login</button>
+                    <button class="login-btn login-secondary" onclick="window.location.href='/auth/register'">Create Account</button>
+                </div>
+            </div>
+        {% else %}
+            <!-- Trip Planning Form (only visible when logged in) -->
+            <main style="display: flex; justify-content: center; align-items: center; min-height: 60vh; padding: 40px 20px;">
+                <section style="max-width: 500px; width: 100%;">
+                    <div class="card" style="padding: 40px 32px; box-shadow: 0 8px 32px rgba(102,126,234,0.10);">
+                        <h2 style="font-size: 1.5em; color: #667eea; margin-bottom: 30px; text-align: center;">📍 Plan Your Trip</h2>
+                        <form method="POST" action="/plan">
+                            <div class="form-group">
+                                <label for="city">Select City</label>
+                                <select id="city" name="city" required>
+                                    <option value="">-- Choose a city --</option>
+                                    <option value="Jaipur">Jaipur</option>
+                                    <option value="Goa">Goa</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="days">Days</label>
+                                <input type="number" id="days" name="days" min="1" max="7" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Your Energy</label>
+                                <div class="slider-container">
+                                    <input type="range" id="energy" name="energy" min="1" max="100" value="100">
+                                    <div class="slider-value"><span id="energy_val">100</span></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="margin-top: 18px;">Generate Itinerary</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        {% endif %}
+        <footer style="margin-top: 60px; text-align: center; color: #eee; font-size: 1em; opacity: 0.7;">
+            &copy; 2026 Adaptive Travel Planner. All rights reserved.
+        </footer>
+    </div>
+    
+    <script>
+        document.getElementById('crowd_level').addEventListener('input', e => {
+            document.getElementById('crowd_val').textContent = e.target.value;
+        });
+        
+        document.getElementById('energy').addEventListener('input', e => {
+            document.getElementById('energy_val').textContent = e.target.value;
+        });
+
+        // Auth Modal Functions
+        function openAuthModal() {
+            document.getElementById('authModal').style.display = 'flex';
+        }
+        
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+        
+        function switchAuthTab(tab) {
+            document.getElementById('loginTab').style.display = 'none';
+            document.getElementById('signupTab').style.display = 'none';
+            document.querySelectorAll('.auth-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (tab === 'login') {
+                document.getElementById('loginTab').style.display = 'block';
+                document.querySelectorAll('.auth-tab-btn')[0].classList.add('active');
+            } else {
+                document.getElementById('signupTab').style.display = 'block';
+                document.querySelectorAll('.auth-tab-btn')[1].classList.add('active');
+            }
+        }
+        
+        // Settings Modal Functions
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+        
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        function saveSettings() {
+            alert('Settings saved successfully!');
+            closeSettingsModal();
+        }
+
+        // Handle Signup Form Submission
+        async function handleSignup(e) {
+            e.preventDefault();
+            const form = document.getElementById('signupForm');
+            const inputs = form.querySelectorAll('input');
+            
+            const fullName = inputs[0].value;
+            const email = inputs[1].value;
+            const password = inputs[2].value;
+            const confirmPassword = inputs[3].value;
+            
+            if (!fullName || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        full_name: fullName,
+                        email: email,
+                        password: password,
+                        confirm_password: confirmPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Account created successfully! Logged in as ' + fullName);
+                    form.reset();
+                    closeAuthModal();
+                    // Update user display
+                    updateUserDisplay(data.user);
+                } else {
+                    alert('Signup failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Handle Login Form Submission
+        async function handleLogin(e) {
+            e.preventDefault();
+            const form = document.getElementById('loginForm');
+            const inputs = form.querySelectorAll('input');
+            
+            const email = inputs[0].value;
+            const password = inputs[1].value;
+            
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Logged in successfully! Welcome ' + data.user.username);
+                    form.reset();
+                    closeAuthModal();
+                    // Update user display
+                    updateUserDisplay({'full_name': data.user.username});
+                } else {
+                    alert('Login failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function updateUserDisplay(user) {
+            const userBtn = document.getElementById('userBtn');
+            if (user && user.full_name) {
+                userBtn.textContent = user.full_name.split(' ')[0];
+                userBtn.style.fontSize = '12px';
+            }
+        }
+
+        // Save Itinerary Function
+        async function saveItinerary() {
+            const itineraryDiv = document.getElementById('itineraryList');
+            if (!itineraryDiv || !itineraryDiv.textContent.trim()) {
+                alert('Please generate an itinerary first!');
+                return;
+            }
+
+            try {
+                const userId = 'guest'; // Use 'guest' for now, or get from user session
+                const response = await fetch('/api/itinerary/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        itinerary: itineraryDiv.innerHTML
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('✓ Itinerary saved successfully!');
+                } else {
+                    alert('Error saving itinerary: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Load Itinerary Function
+        async function loadItinerary() {
+            try {
+                const userId = 'guest'; // Use 'guest' for now, or get from user session
+                const response = await fetch(`/api/itinerary/get?userId=${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok && data.itinerary) {
+                    const itineraryDiv = document.getElementById('itineraryList');
+                    if (itineraryDiv) {
+                        itineraryDiv.innerHTML = data.itinerary;
+                        alert('✓ Itinerary loaded successfully!');
+                        // Scroll to itinerary section
+                        itineraryDiv.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else {
+                    alert('No saved itinerary found. Please generate one first.');
+                }
+            } catch (error) {
+                alert('Error loading itinerary: ' + error.message);
+            }
+        }
+        
+        // Button Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const userBtn = document.getElementById('userBtn');
+            const signupForm = document.getElementById('signupForm');
+            const loginForm = document.getElementById('loginForm');
+            
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', openSettingsModal);
+            }
+            
+            if (userBtn) {
+                userBtn.addEventListener('click', openAuthModal);
+            }
+
+            if (signupForm) {
+                signupForm.addEventListener('submit', handleSignup);
+            }
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+
+            // Save/Load Itinerary Buttons
+            const saveBtn = document.getElementById('saveItineraryBtn');
+            const loadBtn = document.getElementById('loadItineraryBtn');
+
+            if (saveBtn) {
+                saveBtn.addEventListener('click', saveItinerary);
+            }
+
+            if (loadBtn) {
+                loadBtn.addEventListener('click', loadItinerary);
+            }
+            
+            window.addEventListener('click', function(event) {
+                const authModal = document.getElementById('authModal');
+                const settingsModal = document.getElementById('settingsModal');
+                
+                if (event.target === authModal) {
+                    closeAuthModal();
+                }
+                if (event.target === settingsModal) {
+                    closeSettingsModal();
+                }
+            });
+        });
+    </script>
+
+    <!-- User Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+            
+            <div id="loginTab" class="auth-tab active">
+                <h2>Login</h2>
+                <form id="loginForm">
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+            </div>
+            
+            <div id="signupTab" class="auth-tab">
+                <h2>Create Account</h2>
+                <form id="signupForm">
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <input type="password" placeholder="Confirm Password" required>
+                    <button type="submit" class="btn">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSettingsModal()">&times;</span>
+            <h2 style="margin-bottom: 20px;">Settings & Preferences</h2>
+            
+            <div class="settings-section">
+                <h3>🎯 Preferences</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Save favorite attractions
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Show notifications
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox"> Enable dark mode
+                </label>
+            </div>
+            
+            <div class="settings-section">
+                <h3>👥 Travel Style</h3>
+                <label class="radio-label">
+                    <input type="radio" name="style" value="relaxed" checked> Relaxed Pace
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="style" value="moderate"> Moderate Pace
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="style" value="active"> Active Pace
+                </label>
+            </div>
+            
+            <div class="settings-section">
+                <h3>🏷️ Interest Categories</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Heritage Sites
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Museums
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Temples
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox"> Shopping
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox"> Nightlife
+                </label>
+            </div>
+            
+            <button class="btn" onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+
+    <!-- Firebase JS SDK -->
+    <script type="module" src="/static/js/firebase.js"></script>
+    <script type="module">
+    import { signup, login, getIdToken } from '/static/js/firebase.js';
+
+    // Handle Signup
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const inputs = this.querySelectorAll('input');
+      const fullName = inputs[0].value;
+      const email = inputs[1].value;
+      const password = inputs[2].value;
+      const confirmPassword = inputs[3].value;
+      if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+      try {
+        await signup(email, password);
+        const idToken = await getIdToken();
+        // Send idToken to backend for verification/registration
+        await fetch('/api/auth/firebase-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken })
+        });
+        alert('Signup successful!');
+        closeAuthModal();
+      } catch (err) {
+        alert('Signup error: ' + err.message);
+      }
+    });
+
+    // Handle Login
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const inputs = this.querySelectorAll('input');
+      const email = inputs[0].value;
+      const password = inputs[1].value;
+      try {
+        await login(email, password);
+        const idToken = await getIdToken();
+        // Send idToken to backend for verification
+        await fetch('/api/auth/firebase-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken })
+        });
+        alert('Login successful!');
+        closeAuthModal();
+      } catch (err) {
+        alert('Login error: ' + err.message);
+      }
+    });
+    </script>
+</body>
+</html>

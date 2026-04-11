@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Write Review - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <!-- Attraction Info -->
+        <div class="card bg-light p-4 mb-4">
+            <div class="row align-items-center">
+                {% if attraction.image_url %}
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <img src="{{ attraction.image_url }}" class="img-fluid rounded" alt="{{ attraction.name }}" style="max-height: 80px;">
+                    </div>
+                {% endif %}
+                <div class="col-md-9">
+                    <h4 class="mb-1">{{ attraction.name }}</h4>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-map-marker-alt"></i> {{ attraction.city }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Review Form -->
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <h2 class="mb-4">Share Your Experience</h2>
+                
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <!-- Title Field -->
+                    <div class="mb-4">
+                        {{ form.title.label(class="form-label") }}
+                        {% if form.title.errors %}
+                            {{ form.title(class="form-control is-invalid") }}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.title.errors %}
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.title(class="form-control", placeholder="e.g., Amazing experience!") }}
+                            <small class="form-text text-muted">5-200 characters</small>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Rating Field -->
+                    <div class="mb-4">
+                        {{ form.rating.label(class="form-label") }}
+                        <div class="rating-input">
+                            {% if form.rating.errors %}
+                                {{ form.rating(class="form-control is-invalid") }}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.rating.errors %}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.rating(class="form-control", placeholder="4.5") }}
+                                <small class="form-text text-muted">Rate from 1.0 (poor) to 5.0 (excellent)</small>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Star Rating Preview -->
+                        <div id="ratingPreview" class="mt-3">
+                            <p class="text-muted small">Rating preview:</p>
+                            <div class="rating-stars" style="font-size: 1.5rem;">
+                                <i class="far fa-star" style="cursor: pointer;" data-rating="1"></i>
+                                <i class="far fa-star" style="cursor: pointer;" data-rating="2"></i>
+                                <i class="far fa-star" style="cursor: pointer;" data-rating="3"></i>
+                                <i class="far fa-star" style="cursor: pointer;" data-rating="4"></i>
+                                <i class="far fa-star" style="cursor: pointer;" data-rating="5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comment Field -->
+                    <div class="mb-4">
+                        {{ form.comment.label(class="form-label") }}
+                        {% if form.comment.errors %}
+                            {{ form.comment(class="form-control is-invalid", rows="6") }}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.comment.errors %}
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}<br>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.comment(class="form-control", rows="6", placeholder="Share your detailed experience...") }}
+                            <small class="form-text text-muted">20-2000 characters</small>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Submit Buttons -->
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                        <a href="{{ url_for('attractions.view_attraction', attraction_id=attraction.id) }}" class="btn btn-outline-secondary btn-lg">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Star rating preview interaction
+    const ratingInput = document.querySelector('[name="rating"]');
+    const stars = document.querySelectorAll('#ratingPreview .far.fa-star');
+    
+    function updateStars(rating) {
+        stars.forEach((star, index) => {
+            const starValue = index + 1;
+            if (starValue <= Math.floor(rating)) {
+                star.classList.remove('far');
+                star.classList.add('fas');
+            } else if (starValue - rating < 1 && starValue - rating > 0) {
+                star.classList.remove('far');
+                star.classList.add('fas');
+            } else {
+                star.classList.remove('fas');
+                star.classList.add('far');
+            }
+        });
+    }
+    
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = this.dataset.rating;
+            ratingInput.value = rating;
+            updateStars(rating);
+        });
+    });
+    
+    // Update preview on input change
+    ratingInput.addEventListener('change', function() {
+        updateStars(this.value);
+    });
+    
+    // Initial preview update
+    if (ratingInput.value) {
+        updateStars(ratingInput.value);
+    }
+</script>
+{% endblock %}

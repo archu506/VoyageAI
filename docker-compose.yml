@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: smart_tourism
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=True
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - DATABASE_URL=sqlite:///instance/smart_tourism.db
+      - WEATHER_API_KEY=${WEATHER_API_KEY}
+    volumes:
+      - .:/app
+      - /app/instance
+    command: python run.py
+
+  # Optional: PostgreSQL database service
+  # db:
+  #   image: postgres:15
+  #   container_name: smart_tourism_db
+  #   environment:
+  #     POSTGRES_DB: smart_tourism
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:

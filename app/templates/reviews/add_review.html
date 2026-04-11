@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Review {{ place.name }} - Smart Tourism{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('itinerary.city_details', city_name=place.city.name) }}">{{ place.city.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('reviews.place_reviews', place_id=place.id) }}">{{ place.name }}</a></li>
+                    <li class="breadcrumb-item active">Write Review</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header text-white">
+                    <h4 class="mb-0"><i class="fas fa-pen"></i> Write a Review</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Place Info -->
+                    <div class="alert alert-light mb-4">
+                        <h6 class="mb-2"><i class="fas fa-map-pin"></i> {{ place.name }}</h6>
+                        <p class="mb-0 small text-muted">{{ place.city.name }}{% if place.place_type %} • {{ place.place_type }}{% endif %}</p>
+                    </div>
+
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Rating -->
+                        <div class="mb-4">
+                            <label for="rating" class="form-label"><i class="fas fa-star"></i> Rating</label>
+                            <div id="rating-input" class="mb-3">
+                                {% if form.rating.errors %}
+                                    {{ form.rating(class="form-control is-invalid", type="number", step="0.1", min="1", max="5") }}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.rating.errors %}
+                                            {{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.rating(class="form-control", type="number", step="0.1", min="1", max="5", placeholder="e.g., 4.5") }}
+                                {% endif %}
+                            </div>
+                            <div class="star-rating mb-2">
+                                <span class="star-display">☆ ☆ ☆ ☆ ☆</span>
+                            </div>
+                            <small class="form-text text-muted">Rate from 1.0 (Poor) to 5.0 (Excellent)</small>
+                        </div>
+
+                        <!-- Comment -->
+                        <div class="mb-4">
+                            <label for="comment" class="form-label"><i class="fas fa-comment"></i> Your Review</label>
+                            {% if form.comment.errors %}
+                                {{ form.comment(class="form-control is-invalid", rows="6", placeholder="Share your experience...") }}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.comment.errors %}
+                                        {{ error }}<br>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.comment(class="form-control", rows="6", placeholder="Share your experience with this attraction...") }}
+                            {% endif %}
+                            <small class="form-text text-muted">Minimum 10 characters, maximum 1000 characters</small>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-lg btn-primary") }}
+                        </div>
+                    </form>
+
+                    <hr>
+                    <a href="{{ url_for('reviews.place_reviews', place_id=place.id) }}">
+                        <i class="fas fa-arrow-left"></i> Back to Reviews
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ratingInput = document.querySelector('input[name="rating"]');
+    const starDisplay = document.querySelector('.star-display');
+
+    function updateStars(value) {
+        const rating = parseFloat(value) || 0;
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                stars += '★ ';
+            } else if (i - 1 < rating) {
+                stars += '★ ';
+            } else {
+                stars += '☆ ';
+            }
+        }
+        starDisplay.textContent = stars;
+    }
+
+    ratingInput.addEventListener('input', function() {
+        updateStars(this.value);
+    });
+
+    updateStars(ratingInput.value);
+</script>
+
+<style>
+    .star-display {
+        font-size: 1.5rem;
+        color: #fbbf24;
+        letter-spacing: 5px;
+    }
+</style>
+{% endblock %}

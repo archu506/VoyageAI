@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ city.name }} - Smart Tourism{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ city.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="mb-5">
+        <h1 class="display-4">{{ city.name }}</h1>
+        {% if city.country %}
+            <p class="lead text-muted">
+                <i class="fas fa-globe"></i> {{ city.country }}
+            </p>
+        {% endif %}
+        {% if city.description %}
+            <p class="lead">{{ city.description }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Weather -->
+    {% if weather %}
+        <div class="row mb-5">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Current Weather</h5>
+                        <h3>{{ weather.temperature }}°C</h3>
+                        <p class="text-muted text-capitalize">{{ weather.description }}</p>
+                        <p class="small text-muted">
+                            Feels like {{ weather.feels_like }}°C<br>
+                            Humidity {{ weather.humidity }}%
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Attractions Grid -->
+    <h2 class="mb-4">
+        <i class="fas fa-map-pin"></i> Attractions ({{ city.places|length }})
+    </h2>
+
+    {% if city.places %}
+        <div class="row g-4">
+            {% for place in city.places %}
+                <div class="col-lg-6 col-xl-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ place.name }}</h5>
+                            
+                            {% if place.type %}
+                                <p class="card-text">
+                                    <span class="badge bg-info">{{ place.type }}</span>
+                                </p>
+                            {% endif %}
+
+                            {% if place.description %}
+                                <p class="card-text text-muted small">{{ place.description }}</p>
+                            {% endif %}
+
+                            <!-- Rating Section -->
+                            <div class="mb-3 pb-3 border-bottom">
+                                {% if place.average_rating > 0 %}
+                                    <div class="rating mb-2">
+                                        {% for i in range(1, 6) %}
+                                            {% if i <= place.average_rating %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <p class="small mb-0">
+                                        <strong>{{ place.average_rating }}/5</strong> ({{ place.review_count }} reviews)
+                                    </p>
+                                {% else %}
+                                    <p class="small text-muted">No reviews yet</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ url_for('reviews.place_reviews', place_id=place.id) }}" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-comments"></i> Reviews
+                                </a>
+                                {% if current_user.is_authenticated %}
+                                    <a href="{{ url_for('reviews.add_review', place_id=place.id) }}" class="btn btn-sm btn-outline-success flex-grow-1">
+                                        <i class="fas fa-pen"></i> Review
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('auth.login') }}" class="btn btn-sm btn-outline-success flex-grow-1">
+                                        <i class="fas fa-pen"></i> Review
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No attractions found for this city yet.
+        </div>
+    {% endif %}
+
+    <!-- Call to Action -->
+    <div class="mt-5 text-center">
+        <a href="{{ url_for('itinerary.plan') }}" class="btn btn-lg btn-primary">
+            <i class="fas fa-calendar"></i> Plan a Trip to {{ city.name }}
+        </a>
+    </div>
+</div>
+{% endblock %}

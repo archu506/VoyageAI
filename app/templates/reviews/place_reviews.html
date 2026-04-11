@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}{{ place.name }} Reviews - Smart Tourism{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('itinerary.city_details', city_name=place.city.name) }}">{{ place.city.name }}</a></li>
+            <li class="breadcrumb-item active">{{ place.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Attraction Info -->
+        <div class="col-lg-4 mb-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ place.name }}</h5>
+                    <p class="text-muted small">
+                        <i class="fas fa-map-marker-alt"></i> {{ place.city.name }}
+                    </p>
+                    {% if place.place_type %}
+                        <p><span class="badge bg-info">{{ place.place_type }}</span></p>
+                    {% endif %}
+                    
+                    <!-- Rating Summary -->
+                    <div class="my-3 p-3 bg-light rounded">
+                        <h6 class="mb-2">Overall Rating</h6>
+                        {% if place.get_average_rating() > 0 %}
+                            <div class="rating mb-2">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= place.get_average_rating() %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="mb-0">
+                                <strong>{{ place.get_average_rating() }}/5</strong><br>
+                                <small class="text-muted">{{ place.get_review_count() }} reviews</small>
+                            </p>
+                        {% else %}
+                            <p class="text-muted small">No reviews yet</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Action Button -->
+                    {% if current_user.is_authenticated %}
+                        {% if user_review %}
+                            <a href="{{ url_for('reviews.edit_review', review_id=user_review.id) }}" class="btn btn-primary w-100">
+                                <i class="fas fa-edit"></i> Update My Review
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('reviews.add_review', place_id=place.id) }}" class="btn btn-primary w-100">
+                                <i class="fas fa-pen"></i> Write a Review
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('auth.login', next=url_for('reviews.add_review', place_id=place.id)) }}" class="btn btn-primary w-100">
+                            <i class="fas fa-pen"></i> Write a Review
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header text-white">
+                    <h5 class="mb-0"><i class="fas fa-comments"></i> Reviews ({{ reviews.total }})</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Filter Form -->
+                    <form method="GET" class="mb-4">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label for="min_rating" class="form-label">Minimum Rating</label>
+                                <select name="min_rating" id="min_rating" class="form-select form-select-sm">
+                                    <option value="">All Ratings</option>
+                                    <option value="4" {% if min_rating == 4.0 %}selected{% endif %}>4+ Stars</option>
+                                    <option value="3" {% if min_rating == 3.0 %}selected{% endif %}>3+ Stars</option>
+                                    <option value="2" {% if min_rating == 2.0 %}selected{% endif %}>2+ Stars</option>
+                                    <option value="1" {% if min_rating == 1.0 %}selected{% endif %}>1+ Stars</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sort_by" class="form-label">Sort By</label>
+                                <select name="sort_by" id="sort_by" class="form-select form-select-sm">
+                                    <option value="recent" {% if sort_by == 'recent' %}selected{% endif %}>Most Recent</option>
+                                    <option value="highest" {% if sort_by == 'highest' %}selected{% endif %}>Highest Rated</option>
+                                    <option value="lowest" {% if sort_by == 'lowest' %}selected{% endif %}>Lowest Rated</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if reviews.items %}
+                        <div class="reviews-list">
+                            {% for review in reviews.items %}
+                                <div class="review-item border-bottom pb-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1">{{ review.author.username }}</h6>
+                                            <small class="text-muted">
+                                                {{ review.created_at.strftime('%B %d, %Y') }}
+                                                {% if review.updated_at != review.created_at %}
+                                                    <br><em>(Updated {{ review.updated_at.strftime('%B %d, %Y') }})</em>
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                        <div class="rating">
+                                            {% for i in range(1, 6) %}
+                                                {% if i <= review.rating %}
+                                                    <i class="fas fa-star"></i>
+                                                {% else %}
+                                                    <i class="far fa-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">{{ review.rating }}/5</p>
+                                    <p class="mb-2">{{ review.comment }}</p>
+                                    
+                                    {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('reviews.edit_review', review_id=review.id) }}" class="btn btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <form method="POST" action="{{ url_for('reviews.delete_review', review_id=review.id) }}" style="display: inline;">
+                                                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Delete this review?')">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if reviews.pages > 1 %}
+                            <nav class="mt-4">
+                                <ul class="pagination">
+                                    {% if reviews.has_prev %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ url_for('reviews.place_reviews', place_id=place.id, page=reviews.prev_num, min_rating=min_rating, sort_by=sort_by) }}">Previous</a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for page_num in reviews.iter_pages() %}
+                                        {% if page_num %}
+                                            {% if page_num == reviews.page %}
+                                                <li class="page-item active">
+                                                    <span class="page-link">{{ page_num }}</span>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ url_for('reviews.place_reviews', place_id=place.id, page=page_num, min_rating=min_rating, sort_by=sort_by) }}">{{ page_num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% else %}
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if reviews.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ url_for('reviews.place_reviews', place_id=place.id, page=reviews.next_num, min_rating=min_rating, sort_by=sort_by) }}">Next</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle"></i> No reviews yet. Be the first to review!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

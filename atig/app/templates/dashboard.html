@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Government Tourism Dashboard - Jaipur</h1>
+    <p class="subtitle">Real-time congestion monitoring and sustainability analytics</p>
+    
+    <div class="dashboard-grid">
+        <div class="dashboard-section">
+            <h2>🗺️ Congestion Heatmap</h2>
+            <div id="map" style="width: 100%; height: 400px;"></div>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>📊 Analytics</h2>
+            <div id="analytics"></div>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>📈 24-Hour Forecast</h2>
+            <canvas id="forecastChart"></canvas>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>⚠️ Heritage Risk Alert</h2>
+            <div id="heritage-alert"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize map
+    const map = L.map('map').setView([26.9124, 75.8131], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Load heatmap data
+    fetch('/dashboard/api/heatmap-data')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                data.heatmap.forEach(point => {
+                    const color = point.intensity > 1.5 ? '#FF0000' : 
+                                 point.intensity > 1.0 ? '#FFA500' : '#00FF00';
+                    
+                    L.circleMarker([point.lat, point.lng], {
+                        radius: 10 + (point.intensity * 10),
+                        fillColor: color,
+                        color: '#fff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.7
+                    }).bindPopup(`
+                        <strong>${point.name}</strong><br>
+                        Footfall: ${point.footfall}<br>
+                        Congestion: ${(point.intensity * 100).toFixed(0)}%<br>
+                        ${point.heritage_risk ? '🏛️ Heritage Site' : ''}
+                    `).addTo(map);
+                });
+            }
+        });
+    
+    // Load analytics
+    fetch('/dashboard/api/analytics')
+        .then(res => res.json())
+        .then(data => {
+            const analytics = document.getElementById('analytics');
+            const a = data.analytics;
+            analytics.innerHTML = `
+                <div class="stat">
+                    <div class="stat-label">Total Attractions</div>
+                    <div class="stat-value">${a.total_attractions}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">UNESCO Heritage Sites</div>
+                    <div class="stat-value">${a.heritage_sites}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Est. Daily Visitors</div>
+                    <div class="stat-value">${a.estimated_daily_visitors.toLocaleString()}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Sustainability Index</div>
+                    <div class="stat-value">${a.sustainability_index}%</div>
+                </div>
+            `;
+        });
+    
+    // Load forecast chart
+    fetch('/api/crowd-forecast?hours=24')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.city_forecast.length > 0) {
+                const labels = data.city_forecast.slice(0, 24).map(f => 
+                    new Date(f.timestamp).getHours() + ':00'
+                );
+                const values = data.city_forecast.slice(0, 24).map(f => 
+                    f.total_city_footfall
+                );
+                
+                new Chart(document.getElementById('forecastChart'), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Predicted Footfall',
+                            data: values,
+                            borderColor: '#FF6B6B',
+                            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true }
+                        }
+                    }
+                });
+            }
+        });
+    
+    // Heritage alert
+    fetch('/api/city-congestion')
+        .then(res => res.json())
+        .then(data => {
+            const heritageRisks = data.heatmap_data.filter(h => h.congestion_ratio > 1.3);
+            const alertDiv = document.getElementById('heritage-alert');
+            alertDiv.innerHTML = heritageRisks.map(h => `
+                <div class="alert-item">
+                    <span class="alert-icon">⚠️</span>
+                    <div>
+                        <strong>${h.name}</strong>
+                        <p>Congestion: ${(h.congestion_ratio * 100).toFixed(0)}%</p>
+                    </div>
+                </div>
+            `).join('') || '<p>No high-risk alerts</p>';
+        });
+</script>
+
+<style>
+    .dashboard {
+        padding: 30px 0;
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 30px;
+    }
+    
+    .dashboard-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .stat {
+        padding: 15px;
+        border-left: 4px solid #FF6B6B;
+        margin-bottom: 15px;
+    }
+    
+    .stat-label {
+        font-size: 0.9em;
+        color: #666;
+    }
+    
+    .stat-value {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .alert-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #FFF3CD;
+        border-left: 4px solid #FFC107;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+    
+    .alert-icon {
+        font-size: 1.5em;
+    }
+</style>
+{% endblock %}

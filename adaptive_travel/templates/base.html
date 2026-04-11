@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Real-Time Adaptive Travel Brain {% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">🌍 Adaptive Travel Brain</div>
+            <p class="tagline">Smart Itinerary Planning for Jaipur</p>
+            <div class="navbar-menu">
+                <button id="settingsBtn" class="btn-icon" title="Settings">⚙️</button>
+                <button id="userBtn" class="btn-icon" title="User Account">👤</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Real-Time Adaptive Travel Brain | Powered by Smart Tourism Technology</p>
+    </footer>
+
+    <!-- User Auth Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginTab" class="auth-tab active">
+                <h2>Login</h2>
+                <form id="loginForm">
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupTab" class="auth-tab" style="display: none;">
+                <h2>Create Account</h2>
+                <form id="signupForm">
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <input type="password" placeholder="Confirm Password" required>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeSettingsModal()">&times;</span>
+            <h2>Settings & Preferences</h2>
+            
+            <div class="settings-section">
+                <h3>🎯 Preferences</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Save favorite attractions
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Show notifications
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox"> Enable dark mode
+                </label>
+            </div>
+            
+            <div class="settings-section">
+                <h3>👥 Travel Style</h3>
+                <label class="radio-label">
+                    <input type="radio" name="style" value="relaxed" checked> Relaxed Pace
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="style" value="moderate"> Moderate Pace
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="style" value="active"> Active Pace
+                </label>
+            </div>
+            
+            <div class="settings-section">
+                <h3>🏷️ Interest Categories</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Heritage Sites
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Museums
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked> Temples
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox"> Shopping
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox"> Nightlife
+                </label>
+            </div>
+            
+            <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+        // Auth Modal Functions
+        function openAuthModal() {
+            document.getElementById('authModal').style.display = 'block';
+        }
+        
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+        
+        function switchAuthTab(tab) {
+            // Hide all tabs
+            document.getElementById('loginTab').style.display = 'none';
+            document.getElementById('signupTab').style.display = 'none';
+            
+            // Hide all buttons
+            document.querySelectorAll('.auth-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            if (tab === 'login') {
+                document.getElementById('loginTab').style.display = 'block';
+                document.querySelectorAll('.auth-tab-btn')[0].classList.add('active');
+            } else {
+                document.getElementById('signupTab').style.display = 'block';
+                document.querySelectorAll('.auth-tab-btn')[1].classList.add('active');
+            }
+        }
+        
+        // Settings Modal Functions
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+        
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        function saveSettings() {
+            alert('Settings saved successfully!');
+            closeSettingsModal();
+        }
+        
+        // Button Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const userBtn = document.getElementById('userBtn');
+            
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', openSettingsModal);
+            }
+            
+            if (userBtn) {
+                userBtn.addEventListener('click', openAuthModal);
+            }
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(event) {
+                const authModal = document.getElementById('authModal');
+                const settingsModal = document.getElementById('settingsModal');
+                
+                if (event.target === authModal) {
+                    closeAuthModal();
+                }
+                if (event.target === settingsModal) {
+                    closeSettingsModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

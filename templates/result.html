@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Adaptive Itinerary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ff0844;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.65);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--glass-shadow);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            color: transparent;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1em;
+        }
+        
+        .error {
+            background: rgba(255, 8, 68, 0.1);
+            border-left: 4px solid var(--accent);
+            color: #ff4b72;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .weather-section {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.1);
+        }
+        
+        .weather-main {
+            font-size: 5em;
+            font-weight: 300;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .weather-city {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .weather-condition {
+            font-size: 1.3em;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .weather-source {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+        
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        .weather-detail {
+            text-align: center;
+        }
+        
+        .weather-detail-value {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .weather-detail-label {
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            font-size: 1.3em;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .section-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0;
+        }
+        
+        .section-subtitle {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .section-badge {
+            display: inline-block;
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-badge.weather { background: rgba(79, 172, 254, 0.2); color: #4facfe; border-color: #4facfe; }
+        .section-badge.quality { background: rgba(67, 233, 123, 0.2); color: #43e97b; border-color: #43e97b; }
+        .section-badge.summary { background: rgba(254, 225, 64, 0.2); color: #fee140; border-color: #fee140; }
+        .section-badge.attractions { background: rgba(102, 126, 234, 0.2); color: #667eea; border-color: #667eea; }
+        .section-badge.timeline { background: rgba(245, 87, 108, 0.2); color: #f5576c; border-color: #f5576c; }
+        .section-badge.reviews { background: rgba(255, 107, 53, 0.2); color: #ff6b35; border-color: #ff6b35; }
+        
+        .aqi-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .aqi-good { color: #43e97b; border-color: #43e97b; }
+        .aqi-fair { color: #fee140; border-color: #fee140; }
+        .aqi-moderate { color: #fa709a; border-color: #fa709a; }
+        .aqi-poor { color: #ff0844; border-color: #ff0844; }
+        
+        .attraction-item {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--secondary);
+            border-top: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.2s ease;
+        }
+
+        .attraction-item:hover {
+            background: rgba(15, 23, 42, 0.8);
+            transform: translateX(5px);
+        }
+        
+        .attraction-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.1em;
+        }
+        
+        .attraction-score {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+        }
+        
+        .timeline {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .timeline-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .timeline-time {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 80px;
+            font-size: 1.2em;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .timeline-content {
+            margin-left: 20px;
+            flex: 1;
+        }
+        
+        .timeline-attraction {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.1em;
+            margin-bottom: 4px;
+        }
+        
+        .timeline-type {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .review-item {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid #ffba08;
+            border-top: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .review-author {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        
+        .review-rating {
+            color: #ffba08;
+            font-weight: 600;
+        }
+        
+        .review-comment {
+            color: var(--text-muted);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 242, 254, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .weather-main { font-size: 3.5em; }
+            header h1 { font-size: 2.2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Your Adaptive Itinerary</h1>
+            <p>Smart plan based on weather, air quality & your preferences</p>
+        </header>
+        
+        {% if error %}
+            <div class="card error">
+                <strong>Error:</strong> {{ error }}
+                <br><a href="/" class="btn-back">← Back to Planner</a>
+            </div>
+        {% else %}
+            <!-- Save/Load Buttons at TOP -->
+            <div class="card" style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-save"></i> Save This Trip</h2>
+                <p style="margin-bottom: 20px; color: var(--text-muted);">Keep this itinerary for later or start fresh</p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button id="saveItineraryBtn2" class="btn-back" style="margin-top: 0;"><i class="fas fa-save"></i> Save Itinerary</button>
+                    <button id="loadItineraryBtn2" class="btn-back" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--glass-border); margin-top: 0;"><i class="fas fa-folder-open"></i> Load Saved Trip</button>
+                </div>
+            </div>
+
+            <!-- Past Plans Section -->
+            <div class="card" id="pastPlansSection" style="display: none; margin-top: 30px; border-top: 2px solid var(--primary);">
+                <div class="section-header">
+                    <div class="section-title-wrapper">
+                        <h2 class="section-title"><i class="fas fa-list-alt"></i> Your Past Trips</h2>
+                        <span class="section-badge attractions">Saved Plans</span>
+                    </div>
+                    <p class="section-subtitle">View and manage your previous itineraries</p>
+                </div>
+                <div id="pastPlansList" style="display: grid; gap: 12px;">
+                    <p style="color: #999; text-align: center; padding: 20px;">Loading your saved trips...</p>
+                </div>
+            </div>
+            
+            <!-- Weather Display -->
+            <div class="weather-section">
+                <div class="section-header" style="border-bottom: 2px solid rgba(255,255,255,0.2); margin-bottom: 30px; padding-bottom: 15px;">
+                    <div class="section-title-wrapper">
+                        <h1 style="font-size: 1.8em; color: white; margin: 0; font-weight: 600;">🌤️ Weather Conditions</h1>
+                        <span class="section-badge weather">Real-time Data</span>
+                    </div>
+                </div>
+                <div class="weather-city">{{ city }}</div>
+                <div class="weather-main">{{ weather.temperature|int }}°</div>
+                <div class="weather-condition">{{ weather.condition }}</div>
+                <div class="weather-source">{{ weather.description }} ({{ weather.source }})</div>
+                
+                <div class="weather-details">
+                    <div class="weather-detail">
+                        <div class="weather-detail-value">{{ weather.humidity }}%</div>
+                        <div class="weather-detail-label">Humidity</div>
+                    </div>
+                    <div class="weather-detail">
+                        <div class="weather-detail-value">{{ weather.wind_speed|round(1) }}</div>
+                        <div class="weather-detail-label">Wind (m/s)</div>
+                    </div>
+                    <div class="weather-detail">
+                        <div class="weather-detail-value">{{ (weather.rain_prob * 100)|int }}%</div>
+                        <div class="weather-detail-label">Rain Chance</div>
+                    </div>
+                    <div class="weather-detail">
+                        <div class="weather-detail-value">{{ weather.feels_like|int }}°</div>
+                        <div class="weather-detail-label">Feels Like</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Air Quality & Summary -->
+            <div class="grid">
+                <div class="card">
+                    <div class="section-header">
+                        <div class="section-title-wrapper">
+                            <h2 class="section-title">🌫️ Air Quality</h2>
+                            <span class="section-badge quality">Health Impact</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 1.2em; margin-bottom: 15px;">
+                        <span class="aqi-badge aqi-{{ aqi.level|lower|replace(' ', '_')|replace('very_poor', 'poor') }}">
+                            {{ aqi.level }}
+                        </span>
+                    </p>
+                    <p style="color: var(--text-muted); margin-bottom: 10px;">
+                        <strong>PM2.5:</strong> {{ aqi.pm25|round(1) }} µg/m³<br>
+                        <strong>PM10:</strong> {{ aqi.pm10|round(1) }} µg/m³<br>
+                        <strong>AQI Score:</strong> <span style="color: var(--text-main);">{{ aqi.numeric_value|int }}</span>
+                    </p>
+                </div>
+                
+                <div class="card">
+                    <div class="section-header">
+                        <div class="section-title-wrapper">
+                            <h2 class="section-title">⚡ Trip Summary</h2>
+                            <span class="section-badge summary">Your Plan</span>
+                        </div>
+                        <p class="section-subtitle">Overview of your itinerary</p>
+                    </div>
+                    <p style="font-size: 1.1em; line-height: 1.8;">
+                        <strong>Attractions Selected:</strong> {{ adaptation.selected|length }}<br>
+                        <strong>Energy Used:</strong> {{ adaptation.total_energy_used }}/{{ adaptation.user_energy|default(100) }}<br>
+                        <strong>Energy Remaining:</strong> {{ adaptation.energy_remaining }}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Fallback Alerts -->
+            {% if adaptation.fallback_active %}
+            <div class="card" style="background: rgba(255, 152, 0, 0.1); border-left: 4px solid #ff9800;">
+                <h2 style="color: #ffb74d;"><i class="fas fa-exclamation-triangle"></i> Smart Adaptations Active</h2>
+                <p style="color: var(--text-main);">
+                    {% for reason in adaptation.fallback_reasons %}
+                        • {{ reason }}<br>
+                    {% endfor %}
+                </p>
+                <p style="font-size: 0.9em; color: var(--text-muted); margin-top: 10px;">
+                    Itinerary reordered to prioritize comfort & safety
+                </p>
+            </div>
+            {% endif %}
+            
+            <!-- Ranked Attractions -->
+            <div class="card">
+                <div class="section-header">
+                    <div class="section-title-wrapper">
+                        <h2 class="section-title">⭐ Ranked Attractions</h2>
+                        <span class="section-badge attractions">Weighted Scoring</span>
+                    </div>
+                    <p class="section-subtitle">Top destinations based on ratings & relevance</p>
+                </div>
+                {% for attr in adaptation.ranked_attractions[:8] %}
+                    <div class="attraction-item">
+                        <div style="flex: 1;">
+                            <div class="attraction-name">{{ attr.name }}</div>
+                            <div style="font-size: 0.85em; color: #999; margin-top: 5px;">
+                                Type: <strong>{{ attr.type }}</strong> | 
+                                Intensity: <strong>{{ attr.physical_intensity }}/10</strong> |
+                                Indoor: <strong>{{ (attr.indoor * 100)|int }}%</strong>
+                                <br>
+                                <span class="badge bg-info">Crowd Score: {{ attr.crowd_score if attr.crowd_score is defined else 'N/A' }}</span>
+                                <span class="badge 
+                                    {% if attr.crowd_level is defined and 'low' in attr.crowd_level %}bg-success
+                                    {% elif attr.crowd_level is defined and 'medium' in attr.crowd_level %}bg-warning text-dark
+                                    {% elif attr.crowd_level is defined and 'high' in attr.crowd_level %}bg-danger
+                                    {% endif %}">
+                                    {{ attr.crowd_level|capitalize if attr.crowd_level is defined else 'N/A' }}
+                                </span>
+                            </div>
+                            {% if adaptation.fallback_active %}
+                            <div style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                                Weather: {{ attr.weather_score|int }}% | 
+                                AQI: {{ attr.aqi_score|int }}% | 
+                                Energy: {{ attr.energy_score|int }}%
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="attraction-score">{{ attr.score|int }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Timeline -->
+            {% if adaptation.timeline %}
+            <div class="card">
+                <div class="section-header">
+                    <div class="section-title-wrapper">
+                        <h2 class="section-title">📅 Recommended Timeline</h2>
+                        <span class="section-badge timeline">Day Plan</span>
+                    </div>
+                    <p class="section-subtitle">Optimized schedule for your visit</p>
+                </div>
+                <div class="timeline">
+                    {% for item in adaptation.timeline %}
+                        <div class="timeline-item">
+                            <div class="timeline-time">{{ item.time }}</div>
+                            <div class="timeline-content">
+                                <div class="timeline-attraction">{{ item.attraction }}</div>
+                                <div class="timeline-type">{{ item.type }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Community Reviews -->
+            {% if reviews %}
+            <div class="card">
+                <div class="section-header">
+                    <div class="section-title-wrapper">
+                        <h2 class="section-title">👥 Community Reviews</h2>
+                        <span class="section-badge reviews">User Feedback</span>
+                    </div>
+                    <p class="section-subtitle">What travelers are saying</p>
+                </div>
+                {% for place, data in reviews.items() %}
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--secondary); font-size: 1.2em; margin-bottom: 12px;">
+                            {{ place }} <span style="color: #ffba08;">⭐ {{ data.average }}</span>
+                        </h3>
+                        {% for review in data.reviews %}
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <span class="review-author">{{ review.user }}</span>
+                                    <span class="review-rating">
+                                        {% for i in range(review.rating|int) %}★{% endfor %}
+                                    </span>
+                                </div>
+                                <div class="review-comment">{{ review.comment }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <a href="/" class="btn-back">← Plan Another Trip</a>
+        {% endif %}
+    </div>
+
+    <script>
+        // Save Itinerary Function
+        async function saveItinerary() {
+            console.log('💾 saveItinerary() called');
+            // Get all attracted content from the page
+            const pageContent = document.body.innerHTML;
+            console.log('📄 Page content length:', pageContent.length, 'bytes');
+            
+            try {
+                const response = await fetch('/api/itinerary/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        itinerary: pageContent
+                    })
+                });
+
+                console.log('📡 Save response status:', response.status);
+                const data = await response.json();
+                console.log('📦 Save response:', JSON.stringify(data, null, 2));
+                
+                if (response.ok) {
+                    console.log('✅ Save successful - waiting 500ms before loading plans...');
+                    alert('✓ Itinerary saved successfully!');
+                    // Refresh the past plans list
+                    setTimeout(() => {
+                        console.log('⏱️ 500ms delay complete - calling loadPastPlans()');
+                        loadPastPlans();
+                    }, 500);
+                } else {
+                    alert('Error saving itinerary: ' + (data.error || 'Unknown error'));
+                    console.error('❌ Save failed:', data);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error('❌ Save exception:', error);
+            }
+        }
+
+        // Load Itinerary Function
+        async function loadItinerary() {
+            try {
+                const response = await fetch(`/api/itinerary/get`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok && data.itinerary) {
+                    // Store to open in new page or show message
+                    alert('✓ Itinerary loaded! Redirecting...');
+                    // For now, just show a message - in production you'd load this into the current page
+                    window.location.href = '/'; // Go back to home
+                } else {
+                    alert('No saved itinerary found. Please generate one first.');
+                }
+            } catch (error) {
+                alert('Error loading itinerary: ' + error.message);
+            }
+        }
+
+        // Fetch and display past saved plans
+        async function loadPastPlans() {
+            try {
+                console.log('🔍 loadPastPlans() called');
+                const response = await fetch(`/api/itinerary/list`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('📡 Fetch response status:', response.status);
+                const data = await response.json();
+                console.log('📦 Parsed Response JSON:', JSON.stringify(data, null, 2));
+                console.log('🔎 data.plans exists?', !!data.plans);
+                console.log('🔎 data.plans is array?', Array.isArray(data.plans));
+                
+                // Check if we have plans (handle both success and error responses)
+                if (data && data.plans && Array.isArray(data.plans) && data.plans.length > 0) {
+                    console.log('✅ Found', data.plans.length, 'plans - calling displayPastPlans()');
+                    displayPastPlans(data.plans);
+                    const section = document.getElementById('pastPlansSection');
+                    console.log('🎯 pastPlansSection element:', section);
+                    if (section) {
+                        section.style.display = 'block';
+                        console.log('✅ pastPlansSection shown');
+                    } else {
+                        console.error('❌ pastPlansSection element not found!');
+                    }
+                } else {
+                    console.log('⚠️ No plans found or error - data:', data);
+                    const section = document.getElementById('pastPlansSection');
+                    if (section) {
+                        section.style.display = 'none';
+                        console.log('✅ pastPlansSection hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error loading past plans:', error);
+                console.error('Stack:', error.stack);
+                document.getElementById('pastPlansSection').style.display = 'none';
+            }
+        }
+
+        // Display past plans in the UI
+        function displayPastPlans(plans) {
+            console.log('🎨 displayPastPlans() called with', plans.length, 'plans');
+            const plansList = document.getElementById('pastPlansList');
+            console.log('📍 pastPlansList element:', plansList);
+            
+            if (!plansList) {
+                console.error('❌ CRITICAL: pastPlansList element not found!');
+                return;
+            }
+            
+            plansList.innerHTML = '';
+            console.log('🔄 Cleared innerHTML, building plan cards...');
+
+            plans.forEach((plan, index) => {
+                console.log(`📋 Rendering plan ${index + 1}:`, plan);
+                const summary = plan.summary || {};
+                
+                const planCard = document.createElement('div');
+                planCard.style.cssText = `
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    background: rgba(15, 23, 42, 0.4);
+                    padding: 20px;
+                    border-radius: 12px;
+                    border-left: 4px solid var(--primary);
+                    border-top: 1px solid var(--glass-border);
+                    transition: all 0.3s ease;
+                    margin-bottom: 15px;
+                `;
+
+                const energyText = summary.energy_used ? `${summary.energy_used}/${summary.total_energy || 100}` : 'N/A';
+                
+                planCard.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--text-main); font-size: 1.1em; margin-bottom: 12px;">${plan.name}</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px;">
+                            <div style="background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; border-left: 3px solid #667eea;">
+                                <div style="font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">📍 City</div>
+                                <div style="font-weight: 500; color: var(--text-main); font-size: 0.95em;">${summary.city || 'Not specified'}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; border-left: 3px solid #764ba2;">
+                                <div style="font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">🎯 Attractions</div>
+                                <div style="font-weight: 500; color: var(--text-main); font-size: 0.95em;">${summary.attractions || 0} places</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; border-left: 3px solid #f093fb;">
+                                <div style="font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">⚡ Energy</div>
+                                <div style="font-weight: 500; color: var(--text-main); font-size: 0.95em;">${energyText}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; border-left: 3px solid var(--secondary);">
+                                <div style="font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">🌤️ Weather</div>
+                                <div style="font-weight: 500; color: var(--text-main); font-size: 0.95em;">${summary.weather || 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Date -->
+                        <div style="font-size: 0.85em; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+                            <span>📅</span> ${plan.saved_date}
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-left: 15px;">
+                        <button class="load-plan-btn" data-plan-id="${plan.id}" style="background: linear-gradient(135deg, var(--secondary), var(--primary)); color: #000; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; font-family: 'Outfit'; transition: transform 0.2s; white-space: nowrap;">
+                            📂 Load Trip
+                        </button>
+                        <button class="delete-plan-btn" data-plan-id="${plan.id}" style="background: rgba(255, 8, 104, 0.2); color: #ff4b72; border: 1px solid rgba(255, 8, 104, 0.4); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; font-family: 'Outfit'; transition: transform 0.2s; white-space: nowrap;">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                `;
+
+                planCard.addEventListener('mouseenter', function() {
+                    this.style.background = 'rgba(15, 23, 42, 0.7)';
+                    this.style.transform = 'translateY(-2px)';
+                });
+                planCard.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(15, 23, 42, 0.4)';
+                    this.style.transform = 'translateY(0)';
+                });
+
+                plansList.appendChild(planCard);
+                console.log(`✅ Added plan card for: ${plan.name}`);
+            });
+
+            console.log('✅ All', plans.length, 'plan cards created');
+
+            // Add event listeners to load and delete buttons
+            document.querySelectorAll('.load-plan-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const planId = this.dataset.planId;
+                    console.log('📂 Load button clicked for plan:', planId);
+                    loadSpecificPlan(planId);
+                });
+                
+                // Add hover effects
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 4px 16px rgba(102, 126, 234, 0.5)';
+                });
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 2px 8px rgba(102, 126, 234, 0.3)';
+                });
+            });
+
+            document.querySelectorAll('.delete-plan-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const planId = this.dataset.planId;
+                    console.log('🗑️ Delete button clicked for plan:', planId);
+                    deleteSpecificPlan(planId);
+                });
+                
+                // Add hover effects
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 4px 16px rgba(255, 107, 107, 0.5)';
+                });
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 2px 8px rgba(255, 107, 107, 0.3)';
+                });
+            });
+            
+            console.log('✅ Event listeners attached');
+        }
+
+        // Load a specific past plan
+        async function loadSpecificPlan(planId) {
+            try {
+                const response = await fetch(`/api/itinerary/get?planId=${planId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok && data.plan) {
+                    alert(`✓ Loading trip: "${data.plan.name}"`);
+                    // Display the loaded plan's itinerary
+                    const itineraryContainer = document.getElementById('itineraryList');
+                    if (itineraryContainer) {
+                        itineraryContainer.innerHTML = data.plan.itinerary;
+                        window.scrollTo(0, 0);
+                    }
+                } else {
+                    alert('Error loading plan. Please try again.');
+                }
+            } catch (error) {
+                alert('Error loading plan: ' + error.message);
+            }
+        }
+
+        // Delete a specific saved plan
+        async function deleteSpecificPlan(planId) {
+            if (!confirm('Are you sure you want to delete this saved trip?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/itinerary/delete?planId=${planId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    alert('✓ Trip deleted successfully!');
+                    loadPastPlans(); // Reload the list
+                } else {
+                    alert('Error deleting plan. Please try again.');
+                }
+            } catch (error) {
+                alert('Error deleting plan: ' + error.message);
+            }
+        }
+
+        // Attach event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const saveBtn = document.getElementById('saveItineraryBtn2');
+            const loadBtn = document.getElementById('loadItineraryBtn2');
+
+            if (saveBtn) {
+                saveBtn.addEventListener('click', saveItinerary);
+            }
+
+            if (loadBtn) {
+                loadBtn.addEventListener('click', loadItinerary);
+            }
+
+            // Load past plans when page loads
+            loadPastPlans();
+        });
+    </script>
+</body>
+</html>

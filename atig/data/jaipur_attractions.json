@@ -1,0 +1,125 @@
+{
+  "city": "Jaipur",
+  "attractions": [
+    {
+      "id": "A001",
+      "name": "City Palace",
+      "latitude": 26.9250,
+      "longitude": 75.8231,
+      "category": "Heritage",
+      "baseline_footfall": 850,
+      "peak_hours": "10-12, 14-16",
+      "congestion_factor": 1.2,
+      "heritage_priority": 9,
+      "eco_impact": "high"
+    },
+    {
+      "id": "A002",
+      "name": "Jantar Mantar",
+      "latitude": 26.9245,
+      "longitude": 75.8276,
+      "category": "Heritage",
+      "baseline_footfall": 720,
+      "peak_hours": "09-11, 15-17",
+      "congestion_factor": 1.15,
+      "heritage_priority": 10,
+      "eco_impact": "high"
+    },
+    {
+      "id": "A003",
+      "name": "Palace of Winds (Hawa Mahal)",
+      "latitude": 26.9245,
+      "longitude": 75.8275,
+      "category": "Heritage",
+      "baseline_footfall": 1200,
+      "peak_hours": "08-10, 13-15",
+      "congestion_factor": 1.5,
+      "heritage_priority": 10,
+      "eco_impact": "high"
+    },
+    {
+      "id": "A004",
+      "name": "Albert Hall Museum",
+      "latitude": 26.9124,
+      "longitude": 75.8064,
+      "category": "Museum",
+      "baseline_footfall": 480,
+      "peak_hours": "10-12, 14-16",
+      "congestion_factor": 0.9,
+      "heritage_priority": 7,
+      "eco_impact": "medium"
+    },
+    {
+      "id": "A005",
+      "name": "Nahargarh Fort",
+      "latitude": 26.9500,
+      "longitude": 75.7778,
+      "category": "Heritage",
+      "baseline_footfall": 650,
+      "peak_hours": "16-18",
+      "congestion_factor": 0.8,
+      "heritage_priority": 8,
+      "eco_impact": "low"
+    },
+    {
+      "id": "A006",
+      "name": "Govind Dev Ji Temple",
+      "latitude": 26.9250,
+      "longitude": 75.8360,
+      "category": "Religious",
+      "baseline_footfall": 900,
+      "peak_hours": "08-10, 17-19",
+      "congestion_factor": 1.3,
+      "heritage_priority": 8,
+      "eco_impact": "medium"
+    },
+    {
+      "id": "A007",
+      "name": "Ram Niwas Garden",
+      "latitude": 26.9124,
+      "longitude": 75.8064,
+      "category": "Garden",
+      "baseline_footfall": 550,
+      "peak_hours": "06-08, 17-19",
+      "congestion_factor": 0.7,
+      "heritage_priority": 5,
+      "eco_impact": "low"
+    },
+    {
+      "id": "A008",
+      "name": "Birla Temple",
+      "latitude": 26.8667,
+      "longitude": 75.8333,
+      "category": "Religious",
+      "baseline_footfall": 1100,
+      "peak_hours": "08-10, 18-20",
+      "congestion_factor": 1.25,
+      "heritage_priority": 7,
+      "eco_impact": "medium"
+    },
+    {
+      "id": "A009",
+      "name": "Central Park",
+      "latitude": 26.9124,
+      "longitude": 75.7778,
+      "category": "Garden",
+      "baseline_footfall": 400,
+      "peak_hours": "17-19",
+      "congestion_factor": 0.6,
+      "heritage_priority": 4,
+      "eco_impact": "low"
+    },
+    {
+      "id": "A010",
+      "name": "Albert Hall Jaipur Museum",
+      "latitude": 26.9060,
+      "longitude": 75.8130,
+      "category": "Museum",
+      "baseline_footfall": 300,
+      "peak_hours": "10-12",
+      "congestion_factor": 0.5,
+      "heritage_priority": 6,
+      "eco_impact": "low"
+    }
+  ]
+}

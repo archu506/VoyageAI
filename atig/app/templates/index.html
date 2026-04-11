@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h2>Welcome to ATIG</h2>
+        <p>Intelligent Tourism for Sustainable Cities</p>
+        <p class="subtitle">Experience Jaipur with AI-powered crowd prediction and sustainable itineraries</p>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Key Features</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>🔮 Crowd Prediction</h3>
+            <p>Real-time AI forecasting of visitor footfall at attractions</p>
+        </div>
+        <div class="feature-card">
+            <h3>📍 Smart Itinerary</h3>
+            <p>Optimized routes based on crowds, distance, and time</p>
+        </div>
+        <div class="feature-card">
+            <h3>🌱 Sustainability Scoring</h3>
+            <p>Carbon footprint and eco-impact calculation</p>
+        </div>
+        <div class="feature-card">
+            <h3>📊 Government Dashboard</h3>
+            <p>City-wide congestion heatmaps and heritage alerts</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Start Planning Your Trip</h2>
+    <a href="/plan" class="btn btn-primary">Plan an Itinerary →</a>
+    <a href="/attractions" class="btn btn-secondary">View Attractions →</a>
+</section>
+
+<section class="info">
+    <h2>About ATIG</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h4>What is ATIG?</h4>
+            <p>Adaptive Tourism Intelligence Grid is a city-level tourism system that uses machine learning and optimization algorithms to create sustainable, crowd-aware travel experiences.</p>
+        </div>
+        <div class="info-card">
+            <h4>How It Works</h4>
+            <p>ATIG analyzes historical visitor data, predicts crowd patterns, optimizes routes, and calculates environmental impact to help tourists make informed decisions.</p>
+        </div>
+        <div class="info-card">
+            <h4>Why It Matters</h4>
+            <p>Unmanaged tourism creates congestion and environmental strain. ATIG distributes visitors intelligently, protecting heritage sites while enhancing experiences.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

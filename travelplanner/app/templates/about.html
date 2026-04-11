@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}About - Travel Planner{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center">
+    <h1 class="display-4">About Travel Planner</h1>
+    <p class="lead">Your guide to discovering amazing destinations</p>
+</div>
+
+<!-- About Content -->
+<div class="row mb-5">
+    <div class="col-lg-8 mx-auto">
+        <h2 class="mb-4">Our Mission</h2>
+        <p class="lead text-muted">
+            Travel Planner is designed to help travelers discover, explore, and share their travel experiences. 
+            We connect millions of travelers with authentic reviews and recommendations.
+        </p>
+        
+        <h3 class="mt-5 mb-4">What We Offer</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="d-flex">
+                    <div style="font-size: 2rem; color: #3498db; margin-right: 20px;">
+                        <i class="fas fa-map-location-dot"></i>
+                    </div>
+                    <div>
+                        <h5>Destination Guides</h5>
+                        <p class="text-muted">
+                            Explore detailed information about cities and attractions around the world.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="d-flex">
+                    <div style="font-size: 2rem; color: #27ae60; margin-right: 20px;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div>
+                        <h5>Honest Reviews</h5>
+                        <p class="text-muted">
+                            Read authentic reviews from travelers who have visited these attractions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="d-flex">
+                    <div style="font-size: 2rem; color: #e74c3c; margin-right: 20px;">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <div>
+                        <h5>Real-time Weather</h5>
+                        <p class="text-muted">
+                            Get current weather information for any destination to plan better.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="d-flex">
+                    <div style="font-size: 2rem; color: #f39c12; margin-right: 20px;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h5>Community</h5>
+                        <p class="text-muted">
+                            Join our community of travelers and share your experiences with others.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="mt-5 mb-4">Platform Statistics</h3>
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="card p-4">
+                    <h3 class="text-primary mb-2">{{ stats.cities }}</h3>
+                    <p class="text-muted">Destination Cities</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card p-4">
+                    <h3 class="text-primary mb-2">{{ stats.attractions }}</h3>
+                    <p class="text-muted">Listed Attractions</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card p-4">
+                    <h3 class="text-primary mb-2">{{ stats.reviews }}</h3>
+                    <p class="text-muted">Community Reviews</p>
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="mt-5 mb-4">Technology</h3>
+        <p class="text-muted">
+            Travel Planner is built with modern, production-grade technologies:
+        </p>
+        <ul class="list-unstyled">
+            <li class="mb-2">
+                <i class="fas fa-check text-success"></i>
+                <strong>Python</strong> with Flask web framework
+            </li>
+            <li class="mb-2">
+                <i class="fas fa-check text-success"></i>
+                <strong>PostgreSQL</strong> for reliable data storage
+            </li>
+            <li class="mb-2">
+                <i class="fas fa-check text-success"></i>
+                <strong>SQLAlchemy</strong> ORM for database operations
+            </li>
+            <li class="mb-2">
+                <i class="fas fa-check text-success"></i>
+                <strong>Bootstrap 5</strong> for responsive design
+            </li>
+            <li class="mb-2">
+                <i class="fas fa-check text-success"></i>
+                <strong>Docker</strong> for containerization and deployment
+            </li>
+        </ul>
+        
+        <h3 class="mt-5 mb-4">Get Started</h3>
+        <p class="text-muted">
+            Ready to explore? Discover amazing destinations and share your travel experiences with our community.
+        </p>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('attractions.list_attractions') }}" class="btn btn-primary btn-lg me-2">
+                <i class="fas fa-compass"></i> Browse Attractions
+            </a>
+            
+            {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

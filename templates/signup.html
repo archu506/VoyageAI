@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | VoyageAI</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.65);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 85% 70%, rgba(79, 172, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 15% 20%, rgba(0, 242, 254, 0.15) 0%, transparent 50%);
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.8) 100%);
+            z-index: -1;
+        }
+
+        .signup-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            max-width: 480px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .signup-container h2 {
+            font-family: 'Outfit', sans-serif;
+            color: transparent;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1em;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 242, 254, 0.5);
+        }
+
+        .switch-link {
+            display: block;
+            text-align: center;
+            margin-top: 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.3s ease;
+        }
+
+        .switch-link span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .switch-link:hover {
+            color: var(--text-main);
+        }
+
+        .error-message {
+            background: rgba(255, 8, 68, 0.1);
+            border: 1px solid rgba(255, 8, 68, 0.3);
+            color: #ff4b72;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-home:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    
+    <div class="signup-container">
+        <h2>Create Account</h2>
+        <div id="errorMsg" class="error-message" style="display:none;"></div>
+        
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="fullName"><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="fullName" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="email" placeholder="john@example.com" required autocomplete="username">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="confirmPassword"><i class="fas fa-shield-alt"></i> Confirm</label>
+                    <input type="password" id="confirmPassword" placeholder="••••••••" required autocomplete="new-password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Start Planning Now</button>
+        </form>
+        
+        <a href="/login" class="switch-link">Already have an account? <span>Login</span></a>
+    </div>
+
+    <script>
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const full_name = document.getElementById('fullName').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirm_password = document.getElementById('confirmPassword').value;
+        const errorMsg = document.getElementById('errorMsg');
+        const btn = this.querySelector('button');
+        
+        errorMsg.style.display = 'none';
+        
+        if (password !== confirm_password) {
+            errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match';
+            errorMsg.style.display = 'block';
+            return;
+        }
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+        btn.disabled = true;
+        
+        try {
+            const res = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ full_name, email, password, confirm_password })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                window.location.href = '/'; 
+            } else {
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.error || 'Signup failed.');
+                errorMsg.style.display = 'block';
+                btn.innerHTML = 'Start Planning Now';
+                btn.disabled = false;
+            }
+        } catch (err) {
+            errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Server connection failed.';
+            errorMsg.style.display = 'block';
+            btn.innerHTML = 'Start Planning Now';
+            btn.disabled = false;
+        }
+    });
+    </script>
+</body>
+</html>

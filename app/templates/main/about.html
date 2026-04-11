@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Smart Tourism{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4 text-center">About Smart Tourism</h1>
+
+    <div class="row">
+        <div class="col-lg-8 ms-auto me-auto">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Our Mission</h5>
+                    <p>
+                        Smart Tourism is dedicated to helping travelers plan their perfect trip with intelligent itineraries
+                        and real, honest reviews from the community. We believe that informed travelers make the best journeys.
+                    </p>
+                    <p>
+                        Our platform combines advanced algorithms with human experiences to create personalized travel plans
+                        that maximize your time and help you discover hidden gems along the way.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Features</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-calendar-check text-primary"></i>
+                                    <strong>Smart Itineraries</strong> - AI-powered trip planning
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-comments text-success"></i>
+                                    <strong>Community Reviews</strong> - Real feedback from travelers
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-cloud-sun text-warning"></i>
+                                    <strong>Live Weather</strong> - Current conditions for your destination
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <strong>Star Ratings</strong> - Easy-to-read ratings from the community
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-search text-info"></i>
+                                    <strong>Advanced Search</strong> - Find your perfect destination
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-user-circle text-secondary"></i>
+                                    <strong>User Accounts</strong> - Save your reviews and trips
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Technology Stack</h5>
+                    <p>Built with modern, scalable technologies:</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><strong>Backend:</strong> Flask (Python)</li>
+                        <li class="mb-2"><strong>Database:</strong> SQLAlchemy ORM with SQLite/PostgreSQL</li>
+                        <li class="mb-2"><strong>Frontend:</strong> Bootstrap 5, HTML5, JavaScript</li>
+                        <li class="mb-2"><strong>APIs:</strong> OpenWeatherMap API for real-time weather</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Get In Touch</h5>
+                    <p>Have questions or suggestions? We'd love to hear from you!</p>
+                    <p>
+                        <i class="fas fa-envelope"></i> <strong>Email:</strong> info@smarttourism.com<br>
+                        <i class="fas fa-phone"></i> <strong>Phone:</strong> +1 (555) 123-4567
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

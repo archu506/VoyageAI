@@ -1,0 +1,12 @@
+{
+  "jaipur": {
+    "places": [
+      {"name": "Amber Fort", "type": "outdoor", "carbon": 3},
+      {"name": "Hawa Mahal", "type": "outdoor", "carbon": 2},
+      {"name": "City Palace", "type": "indoor", "carbon": 2},
+      {"name": "Jantar Mantar", "type": "outdoor", "carbon": 2},
+      {"name": "Nahargarh Fort", "type": "outdoor", "carbon": 4},
+      {"name": "Chokhi Dhani", "type": "indoor", "carbon": 3}
+    ]
+  }
+}

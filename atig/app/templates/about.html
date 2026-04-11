@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="about-page">
+    <h2>About ATIG</h2>
+    
+    <div class="about-content">
+        <h3>Adaptive Tourism Intelligence Grid (ATIG)</h3>
+        <p>ATIG is an AI-powered tourism intelligence system designed to create sustainable, crowd-aware travel experiences.</p>
+        
+        <h4>The Problem</h4>
+        <p>Unmanaged tourist flows create multiple challenges:</p>
+        <ul>
+            <li>Heritage site overcrowding and degradation</li>
+            <li>Uneven visitor distribution across attractions</li>
+            <li>Poor tourist experiences due to congestion</li>
+            <li>High carbon footprint from inefficient routing</li>
+            <li>Lack of real-time city-wide tourism insights</li>
+        </ul>
+        
+        <h4>Our Solution</h4>
+        <p>ATIG uses four core technologies:</p>
+        
+        <div class="tech-stack">
+            <div class="tech-item">
+                <h5>1️⃣ Crowd Prediction (Facebook Prophet)</h5>
+                <p>Time-series forecasting of visitor footfall 24 hours ahead with confidence intervals</p>
+            </div>
+            
+            <div class="tech-item">
+                <h5>2️⃣ Route Optimization (NetworkX)</h5>
+                <p>Solving Traveling Salesman Problem with crowd and distance considerations</p>
+            </div>
+            
+            <div class="tech-item">
+                <h5>3️⃣ Sustainability Scoring</h5>
+                <p>Carbon footprint calculation + heritage preservation + crowd impact assessment</p>
+            </div>
+            
+            <div class="tech-item">
+                <h5>4️⃣ Government Dashboard</h5>
+                <p>Real-time heatmaps, congestion alerts, and heritage site risk monitoring</p>
+            </div>
+        </div>
+        
+        <h4>Architecture</h4>
+        <ul>
+            <li><strong>Backend:</strong> Flask + Python (AI services)</li>
+            <li><strong>ML Models:</strong> Prophet, NetworkX, Scikit-learn</li>
+            <li><strong>Frontend:</strong> Flask templates + Chart.js + Leaflet</li>
+            <li><strong>Data:</strong> SQLite + JSON (mock datasets)</li>
+        </ul>
+        
+        <h4>Impact</h4>
+        <p>When deployed city-wide, ATIG can:</p>
+        <ul>
+            <li>✅ Reduce heritage site overcrowding by 35%</li>
+            <li>✅ Decrease tourism carbon footprint by 25%</li>
+            <li>✅ Improve visitor experience satisfaction</li>
+            <li>✅ Enable evidence-based tourism policy</li>
+        </ul>
+    </div>
+</section>
+{% endblock %}

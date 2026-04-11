@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Review - Smart Tourism{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('itinerary.city_details', city_name=review.place.city.name) }}">{{ review.place.city.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('reviews.place_reviews', place_id=review.place.id) }}">{{ review.place.name }}</a></li>
+                    <li class="breadcrumb-item active">Edit Review</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header text-white">
+                    <h4 class="mb-0"><i class="fas fa-edit"></i> Edit Review</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Place Info -->
+                    <div class="alert alert-light mb-4">
+                        <h6 class="mb-2"><i class="fas fa-map-pin"></i> {{ review.place.name }}</h6>
+                        <p class="mb-2 small text-muted">{{ review.place.city.name }}{% if review.place.place_type %} • {{ review.place.place_type }}{% endif %}</p>
+                        <p class="mb-0 small text-muted">
+                            <strong>Original Review:</strong> {{ review.created_at.strftime('%B %d, %Y') }}
+                            {% if review.updated_at != review.created_at %}
+                                <br><em>Last Updated: {{ review.updated_at.strftime('%B %d, %Y') }}</em>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Rating -->
+                        <div class="mb-4">
+                            <label for="rating" class="form-label"><i class="fas fa-star"></i> Rating</label>
+                            <div id="rating-input" class="mb-3">
+                                {% if form.rating.errors %}
+                                    {{ form.rating(class="form-control is-invalid", type="number", step="0.1", min="1", max="5") }}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.rating.errors %}
+                                            {{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.rating(class="form-control", type="number", step="0.1", min="1", max="5") }}
+                                {% endif %}
+                            </div>
+                            <div class="star-rating mb-2">
+                                <span class="star-display">★ ★ ★ ★ ★</span>
+                            </div>
+                            <small class="form-text text-muted">Rate from 1.0 (Poor) to 5.0 (Excellent)</small>
+                        </div>
+
+                        <!-- Comment -->
+                        <div class="mb-4">
+                            <label for="comment" class="form-label"><i class="fas fa-comment"></i> Your Review</label>
+                            {% if form.comment.errors %}
+                                {{ form.comment(class="form-control is-invalid", rows="6") }}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.comment.errors %}
+                                        {{ error }}<br>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.comment(class="form-control", rows="6") }}
+                            {% endif %}
+                            <small class="form-text text-muted">Minimum 10 characters, maximum 1000 characters</small>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid gap-2">
+                            {{ form.submit(value="Update Review", class="btn btn-lg btn-primary") }}
+                        </div>
+                    </form>
+
+                    <hr>
+                    
+                    <!-- Delete Option -->
+                    <form method="POST" action="{{ url_for('reviews.delete_review', review_id=review.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this review? This action cannot be undone.')">
+                            <i class="fas fa-trash"></i> Delete Review
+                        </button>
+                    </form>
+
+                    <a href="{{ url_for('reviews.place_reviews', place_id=review.place.id) }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Back to Reviews
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ratingInput = document.querySelector('input[name="rating"]');
+    const starDisplay = document.querySelector('.star-display');
+
+    function updateStars(value) {
+        const rating = parseFloat(value) || 0;
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                stars += '★ ';
+            } else {
+                stars += '☆ ';
+            }
+        }
+        starDisplay.textContent = stars;
+    }
+
+    ratingInput.addEventListener('input', function() {
+        updateStars(this.value);
+    });
+
+    updateStars(ratingInput.value);
+</script>
+
+<style>
+    .star-display {
+        font-size: 1.5rem;
+        color: #fbbf24;
+        letter-spacing: 5px;
+    }
+</style>
+{% endblock %}

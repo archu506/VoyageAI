@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Plan Your Trip - Smart Tourism{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header text-white">
+                    <h4 class="mb-0"><i class="fas fa-calendar"></i> Plan Your Itinerary</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Enter your destination and trip duration to generate a personalized itinerary.
+                    </p>
+
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-4">
+                            <label for="city" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> Destination City
+                            </label>
+                            {% if form.city.errors %}
+                                {{ form.city(class="form-control is-invalid", placeholder="e.g., Jaipur, Goa") }}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.city.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.city(class="form-control", placeholder="e.g., Jaipur, Goa") }}
+                            {% endif %}
+                            <small class="form-text text-muted mt-2">
+                                <i class="fas fa-info-circle"></i> Type the name of your destination city
+                            </small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="days" class="form-label">
+                                <i class="fas fa-hourglass-half"></i> Number of Days
+                            </label>
+                            {% if form.days.errors %}
+                                {{ form.days(class="form-control is-invalid", type="number", min="1", max="30") }}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.days.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.days(class="form-control", type="number", min="1", max="30", placeholder="1-30") }}
+                            {% endif %}
+                            <small class="form-text text-muted mt-2">
+                                <i class="fas fa-info-circle"></i> Duration of your trip (1-30 days)
+                            </small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-lg btn-primary") }}
+                        </div>
+                    </form>
+
+                    <hr>
+                    <div class="alert alert-light" role="alert">
+                        <h6 class="mb-3"><i class="fas fa-lightbulb"></i> Available Cities:</h6>
+                        <p class="small mb-0">
+                            Jaipur, Goa, and more! Check our <a href="{{ url_for('main.index') }}">featured destinations</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

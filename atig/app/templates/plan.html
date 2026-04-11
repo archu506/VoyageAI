@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="plan-page">
+    <h2>Plan Your Smart Itinerary</h2>
+    
+    <div class="plan-container">
+        <!-- Selection Panel -->
+        <div class="selection-panel">
+            <h3>Select Attractions</h3>
+            <div id="attractionsChecklist" class="checklist">
+                <!-- Loaded dynamically -->
+            </div>
+            
+            <div class="plan-controls">
+                <label>
+                    Time Budget (hours):
+                    <input type="number" id="timeBudget" min="1" max="12" value="8">
+                </label>
+                
+                <label>
+                    Transport Mode:
+                    <select id="transportMode">
+                        <option value="auto">Auto-rickshaw</option>
+                        <option value="car">Personal Car</option>
+                        <option value="bus">Public Bus</option>
+                        <option value="bike">Bicycle</option>
+                    </select>
+                </label>
+                
+                <button id="optimizeBtn" class="btn btn-primary">Optimize Itinerary →</button>
+            </div>
+        </div>
+        
+        <!-- Results Panel -->
+        <div class="results-panel">
+            <div id="resultsContainer" class="hidden">
+                <h3>Your Optimized Itinerary</h3>
+                <div id="itineraryDetails"></div>
+                <div id="sustainabilityScore"></div>
+                <div id="mapContainer" style="height: 400px; margin-top: 20px;"></div>
+            </div>
+            
+            <div id="loadingSpinner" class="hidden">
+                <p>Optimizing your route...</p>
+            </div>
+            
+            <div id="placeholderText">
+                <p>Select attractions and click "Optimize Itinerary" to get personalized recommendations</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+let map = null;
+let selectedAttractions = new Set();
+let currentItinerary = null;
+
+document.addEventListener('DOMContentLoaded', async function() {
+    // Load attractions
+    await loadAttractions();
+    
+    // Event listeners
+    document.getElementById('optimizeBtn').addEventListener('click', optimizeItinerary);
+});
+
+async function loadAttractions() {
+    try {
+        const response = await fetch('/api/attractions');
+        const data = await response.json();
+        
+        if (data.success) {
+            const container = document.getElementById('attractionsChecklist');
+            container.innerHTML = data.data.map(attr => `
+                <label class="checkbox-item">
+                    <input type="checkbox" value="${attr.id}" onchange="toggleAttraction('${attr.id}')">
+                    <span>${attr.name} (${attr.category})</span>
+                </label>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error loading attractions:', error);
+    }
+}
+
+function toggleAttraction(attrId) {
+    if (selectedAttractions.has(attrId)) {
+        selectedAttractions.delete(attrId);
+    } else {
+        selectedAttractions.add(attrId);
+    }
+}
+
+async function optimizeItinerary() {
+    if (selectedAttractions.size === 0) {
+        alert('Please select at least one attraction');
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        const response = await fetch('/api/optimize-itinerary', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                attractions: Array.from(selectedAttractions),
+                time_budget_hours: parseInt(document.getElementById('timeBudget').value),
+                transport_mode: document.getElementById('transportMode').value
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentItinerary = data.itinerary;
+            displayResults(data);
+            showResults();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error optimizing itinerary:', error);
+        alert('Error optimizing itinerary');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function displayResults(data) {
+    const itinerary = data.itinerary;
+    const sustainability = data.sustainability;
+    
+    // Itinerary details
+    const itineraryHtml = `
+        <div class="itinerary-summary">
+            <p><strong>Total Distance:</strong> ${itinerary.total_distance_km.toFixed(1)} km</p>
+            <p><strong>Travel Time:</strong> ${itinerary.total_travel_time_hours.toFixed(2)} hours</p>
+            <p><strong>Visit Time:</strong> ${itinerary.total_visit_time_hours.toFixed(2)} hours</p>
+        </div>
+        
+        <div class="itinerary-steps">
+            ${itinerary.attractions.map((attr, idx) => `
+                <div class="itinerary-step">
+                    <div class="step-number">${idx + 1}</div>
+                    <div class="step-content">
+                        <h4>${attr.name}</h4>
+                        <p class="category">${attr.category}</p>
+                        <p><strong>Start:</strong> ${attr.start_time_hours.toFixed(1)}h | <strong>Duration:</strong> ${attr.visit_duration_hours.toFixed(1)}h</p>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    // Sustainability score
+    const ecoHtml = `
+        <div class="sustainability-card">
+            <h3>🌱 Sustainability Score</h3>
+            <div class="score-circle">
+                <div class="score-value">${sustainability.overall_score}</div>
+                <p>/100</p>
+            </div>
+            
+            <div class="score-breakdown">
+                <div class="score-item">
+                    <span>Carbon Footprint:</span>
+                    <strong>${sustainability.carbon_emissions_kg} kg CO₂</strong>
+                </div>
+                <div class="score-item">
+                    <span>Crowd Impact:</span>
+                    <strong>${sustainability.crowd_impact_score}/100</strong>
+                </div>
+                <div class="score-item">
+                    <span>Heritage Score:</span>
+                    <strong>${sustainability.heritage_score}/100</strong>
+                </div>
+            </div>
+            
+            <div class="recommendations">
+                <h4>Recommendations</h4>
+                <ul>
+                    ${sustainability.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('itineraryDetails').innerHTML = itineraryHtml;
+    document.getElementById('sustainabilityScore').innerHTML = ecoHtml;
+    
+    // Initialize map
+    initMap(itinerary.attractions);
+}
+
+function initMap(attractions) {
+    if (map) {
+        map.remove();
+    }
+    
+    const mapContainer = document.getElementById('mapContainer');
+    map = L.map(mapContainer).setView([26.9124, 75.8131], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+    
+    // Add markers
+    attractions.forEach((attr, idx) => {
+        L.circleMarker([attr.latitude, attr.longitude], {
+            radius: 8,
+            fillColor: '#2196F3',
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).addTo(map).bindPopup(`<b>${idx + 1}. ${attr.name}</b><br>${attr.category}`);
+    });
+    
+    // Draw route
+    if (attractions.length > 1) {
+        const latlngs = attractions.map(a => [a.latitude, a.longitude]);
+        L.polyline(latlngs, {
+            color: '#FF5722',
+            weight: 2,
+            opacity: 0.7,
+            dashArray: '5, 5'
+        }).addTo(map);
+    }
+}
+
+function showResults() {
+    document.getElementById('placeholderText').classList.add('hidden');
+    document.getElementById('resultsContainer').classList.remove('hidden');
+}
+
+function showLoading(show) {
+    document.getElementById('loadingSpinner').classList.toggle('hidden', !show);
+}
+</script>
+{% endblock %}

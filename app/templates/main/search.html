@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Search Cities - Smart Tourism{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4"><i class="fas fa-search"></i> Search Cities</h1>
+
+    <div class="row mb-5">
+        <div class="col-lg-6 ms-auto me-auto">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="input-group input-group-lg">
+                    {% if form.search_query.errors %}
+                        {{ form.search_query(class="form-control is-invalid", placeholder="Search for a city...") }}
+                        <div class="invalid-feedback d-block w-100">
+                            {% for error in form.search_query.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.search_query(class="form-control", placeholder="Search for a city...") }}
+                    {% endif %}
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    {% if query %}
+        <h3 class="mb-4">
+            {% if results.items %}
+                Results for "{{ query }}" ({{ results.total }} found)
+            {% else %}
+                No results for "{{ query }}"
+            {% endif %}
+        </h3>
+
+        {% if results.items %}
+            <div class="row g-4">
+                {% for city in results.items %}
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ city.name }}</h5>
+                                {% if city.country %}
+                                    <p class="card-text text-muted small">
+                                        <i class="fas fa-globe"></i> {{ city.country }}
+                                    </p>
+                                {% endif %}
+                                {% if city.description %}
+                                    <p class="card-text">{{ city.description[:150] }}...</p>
+                                {% endif %}
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-pin"></i> {{ city.places|length }} attractions
+                                    </small>
+                                </p>
+                                
+                                <div class="d-flex gap-2 mt-3">
+                                    <a href="{{ url_for('itinerary.city_details', city_name=city.name) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="{{ url_for('itinerary.plan') }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-calendar"></i> Plan Trip
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if results.pages > 1 %}
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if results.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('main.search', search_query=query, page=results.prev_num) }}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        {% for page_num in results.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num == results.page %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('main.search', search_query=query, page=page_num) }}">{{ page_num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if results.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('main.search', search_query=query, page=results.next_num) }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> No cities found. Try a different search term.
+                <a href="{{ url_for('main.index') }}" class="alert-link">Browse all destinations</a>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center">
+            <a href="{{ url_for('main.index') }}" class="btn btn-lg btn-outline-primary">
+                <i class="fas fa-home"></i> Browse All Destinations
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

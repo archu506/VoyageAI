@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}{{ attraction.name }} - Travel Planner{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Attraction Header -->
+        {% if attraction.image_url %}
+            <img src="{{ attraction.image_url }}" class="img-fluid rounded shadow-sm mb-4" alt="{{ attraction.name }}" style="max-height: 400px; width: 100%; object-fit: cover;">
+        {% else %}
+            <div style="height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 30px;">
+                <i class="fas fa-landmark" style="font-size: 5rem; color: white;"></i>
+            </div>
+        {% endif %}
+        
+        <h1 class="mb-2">{{ attraction.name }}</h1>
+        
+        <div class="mb-4">
+            <p class="text-muted mb-2">
+                <i class="fas fa-map-marker-alt"></i> 
+                <a href="{{ url_for('attractions.city_attractions', city_id=city.id) }}">
+                    {{ city.name }}, {{ city.country }}
+                </a>
+            </p>
+            
+            <span class="badge bg-secondary mb-2">{{ attraction.category|capitalize }}</span>
+        </div>
+        
+        <!-- Rating -->
+        <div class="card bg-light p-3 mb-4">
+            <div class="rating-stars mb-2">
+                {% for i in range(5) %}
+                    {% if i < average_rating|int %}
+                        <i class="fas fa-star"></i>
+                    {% elif average_rating - i < 1 and average_rating - i > 0 %}
+                        <i class="fas fa-star-half-alt"></i>
+                    {% else %}
+                        <i class="far fa-star"></i>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <p class="mb-0">
+                <strong>{{ average_rating }}/5.0</strong> based on {{ review_count }} reviews
+            </p>
+        </div>
+        
+        <!-- Weather (if available) -->
+        {% if weather %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cloud-sun"></i> Current Weather in {{ city.name }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Temperature:</strong> {{ weather.temperature }}°C</p>
+                            <p><strong>Feels Like:</strong> {{ weather.feels_like }}°C</p>
+                            <p><strong>Humidity:</strong> {{ weather.humidity }}%</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Condition:</strong> {{ weather.description }}</p>
+                            <p><strong>Wind Speed:</strong> {{ weather.wind_speed }} m/s</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Description -->
+        <h3 class="mb-3">About</h3>
+        <p class="lead text-muted">{{ attraction.description }}</p>
+        
+        <!-- Review Button -->
+        {% if current_user.is_authenticated %}
+            <div class="mb-4">
+                <a href="{{ url_for('reviews.add_review', attraction_id=attraction.id) }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-pen"></i> Write a Review
+                </a>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <a href="{{ url_for('auth.login') }}">Login</a> to leave a review
+            </div>
+        {% endif %}
+        
+        <!-- Reviews Section -->
+        <h3 class="mb-4">Recent Reviews</h3>
+        
+        {% if reviews %}
+            {% for review in reviews %}
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="card-title mb-1">{{ review.title }}</h5>
+                                <p class="text-muted small mb-2">
+                                    By <strong>{{ review.user.username }}</strong>
+                                </p>
+                            </div>
+                            <small class="text-muted">
+                                {{ review.created_at.strftime('%b %d, %Y') }}
+                            </small>
+                        </div>
+                        
+                        <div class="rating-stars mb-2">
+                            {% for i in range(5) %}
+                                {% if i < review.rating|int %}
+                                    <i class="fas fa-star"></i>
+                                {% elif review.rating - i < 1 and review.rating - i > 0 %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="ms-2">{{ review.rating }}/5.0</span>
+                        </div>
+                        
+                        <p class="card-text">{{ review.comment }}</p>
+                        
+                        {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('reviews.edit_review', review_id=review.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form action="{{ url_for('reviews.delete_review', review_id=review.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this review?')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Pagination -->
+            {% if reviews_page and reviews_page.pages > 1 %}
+                <nav aria-label="Reviews pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if reviews_page.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ reviews_page.prev_num }}">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page_num in reviews_page.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num == reviews_page.page %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if reviews_page.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ reviews_page.next_num }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ reviews_page.pages }}">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                No reviews yet. Be the first to share your experience!
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm sticky-top" style="top: 20px;">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Quick Info</h5>
+                
+                <p class="mb-2">
+                    <strong>Category:</strong><br>
+                    <span class="badge bg-secondary">{{ attraction.category|capitalize }}</span>
+                </p>
+                
+                <p class="mb-2">
+                    <strong>Rating:</strong><br>
+                    <span class="badge badge-rating">{{ average_rating }}/5.0</span>
+                </p>
+                
+                <p class="mb-2">
+                    <strong>Reviews:</strong><br>
+                    {{ review_count }} review{% if review_count != 1 %}s{% endif %}
+                </p>
+                
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('reviews.add_review', attraction_id=attraction.id) }}" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-pen"></i> Leave Review
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}?next={{ request.url }}" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-sign-in-alt"></i> Login to Review
+                    </a>
+                {% endif %}
+                
+                <a href="{{ url_for('attractions.city_attractions', city_id=city.id) }}" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-map"></i> View City
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

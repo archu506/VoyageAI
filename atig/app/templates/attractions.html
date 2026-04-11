@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="attractions-page">
+    <h2>Jaipur Attractions</h2>
+    
+    <div id="attractionsContainer" class="attractions-grid">
+        <!-- Loaded dynamically -->
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const response = await fetch('/api/attractions');
+        const data = await response.json();
+        
+        const container = document.getElementById('attractionsContainer');
+        
+        if (data.success) {
+            container.innerHTML = data.data.map(attr => `
+                <div class="attraction-card">
+                    <h3>${attr.name}</h3>
+                    <p class="category">${attr.category}</p>
+                    <div class="attr-details">
+                        <p><strong>Heritage Priority:</strong> ${attr.heritage_priority}/10</p>
+                        <p><strong>Baseline Visitors/hour:</strong> ${attr.baseline_footfall}</p>
+                        <p><strong>Peak Hours:</strong> ${attr.peak_hours}</p>
+                        <p><strong>Environmental Impact:</strong> <span class="impact ${attr.eco_impact}">${attr.eco_impact.toUpperCase()}</span></p>
+                    </div>
+                    <a href="/dashboard" class="btn btn-small">View Forecast</a>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error loading attractions:', error);
+        document.getElementById('attractionsContainer').innerHTML = '<p>Error loading attractions</p>';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+{
+  "attractions": [
+    {
+      "id": 1,
+      "name": "City Palace",
+      "type": "outdoor",
+      "duration": 120,
+      "base_energy_cost": 28,
+      "popularity": "high",
+      "pollution_sensitivity": "high",
+      "description": "Beautiful palace blending Mughal and European architecture"
+    },
+    {
+      "id": 2,
+      "name": "Jantar Mantar",
+      "type": "outdoor",
+      "duration": 90,
+      "base_energy_cost": 22,
+      "popularity": "high",
+      "pollution_sensitivity": "low",
+      "description": "UNESCO World Heritage astronomical measurement instruments"
+    },
+    {
+      "id": 3,
+      "name": "Hawa Mahal (Palace of Winds)",
+      "type": "outdoor",
+      "duration": 60,
+      "base_energy_cost": 18,
+      "popularity": "high",
+      "pollution_sensitivity": "high",
+      "description": "Iconic pink sandstone structure with 953 small windows"
+    },
+    {
+      "id": 4,
+      "name": "Albert Hall Museum",
+      "type": "indoor",
+      "duration": 120,
+      "base_energy_cost": 20,
+      "popularity": "medium",
+      "pollution_sensitivity": "low",
+      "description": "Museum with artifacts, sculptures, and decorative arts"
+    },
+    {
+      "id": 5,
+      "name": "Govind Dev Ji Temple",
+      "type": "outdoor",
+      "duration": 60,
+      "base_energy_cost": 14,
+      "popularity": "medium",
+      "pollution_sensitivity": "low",
+      "description": "Ancient Krishna temple with beautiful architecture"
+    },
+    {
+      "id": 6,
+      "name": "Sisodia Rani Garden",
+      "type": "outdoor",
+      "duration": 90,
+      "base_energy_cost": 20,
+      "popularity": "low",
+      "pollution_sensitivity": "medium",
+      "description": "Serene garden with cascading fountains and pavilions"
+    },
+    {
+      "id": 7,
+      "name": "Chaugan Stadium",
+      "type": "outdoor",
+      "duration": 60,
+      "base_energy_cost": 22,
+      "popularity": "low",
+      "pollution_sensitivity": "low",
+      "description": "Historic polo ground and park for evening leisure"
+    },
+    {
+      "id": 8,
+      "name": "City Palace Art Gallery",
+      "type": "indoor",
+      "duration": 90,
+      "base_energy_cost": 15,
+      "popularity": "low",
+      "pollution_sensitivity": "low",
+      "description": "Contemporary art exhibitions and cultural space"
+    },
+    {
+      "id": 9,
+      "name": "Johari Bazaar",
+      "type": "outdoor",
+      "duration": 120,
+      "base_energy_cost": 26,
+      "popularity": "high",
+      "pollution_sensitivity": "high",
+      "description": "Traditional jewelry market with stunning bangles and crafts"
+    },
+    {
+      "id": 10,
+      "name": "Nahargarh Fort",
+      "type": "outdoor",
+      "duration": 150,
+      "base_energy_cost": 30,
+      "popularity": "medium",
+      "pollution_sensitivity": "medium",
+      "description": "Hill fort with panoramic city views and historical significance"
+    }
+  ]
+}
