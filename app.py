@@ -19,8 +19,11 @@ from routes.planner import planner_bp
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-key-change-in-production")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///travel.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/travel.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+os.makedirs("/tmp", exist_ok=True)
 
 # Cache config
 app.config['CACHE_TYPE'] = 'SimpleCache'
