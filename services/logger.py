@@ -4,13 +4,13 @@ from datetime import datetime
 
 def setup_logger(name="adaptive_travel"):
     """Configure logging to file and console."""
-    os.makedirs("logs", exist_ok=True)
+    os.makedirs("/tmp/logs", exist_ok=True)
     
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
     
     # File handler
-    fh = logging.FileHandler("logs/app.log")
+   fh = logging.FileHandler("/tmp/logs/app.log")
     fh.setLevel(logging.DEBUG)
     
     # Console handler
