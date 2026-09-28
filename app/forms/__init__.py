@@ -6,11 +6,11 @@ Handles validation and CSRF protection for all forms.
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField, IntegerField, FloatField,
-    TextAreaField, SubmitField, SelectField
+    TextAreaField, SubmitField
 )
 from wtforms.validators import (
     DataRequired, Email, EqualTo, Length, NumberRange, Regexp,
-    ValidationError, Optional
+    ValidationError
 )
 from app.models import User, Place
 
@@ -117,23 +117,9 @@ class ReviewForm(FlaskForm):
     submit = SubmitField('Submit Review')
 
 
-class UpdateReviewForm(FlaskForm):
+class UpdateReviewForm(ReviewForm):
     """Form for updating existing reviews."""
     
-    rating = FloatField(
-        'Rating',
-        validators=[
-            DataRequired(),
-            NumberRange(min=1.0, max=5.0, message='Rating must be between 1.0 and 5.0')
-        ]
-    )
-    comment = TextAreaField(
-        'Your Review',
-        validators=[
-            DataRequired(message='Please write a review'),
-            Length(min=10, max=1000, message='Review must be between 10 and 1000 characters')
-        ]
-    )
     submit = SubmitField('Update Review')
 
 
@@ -148,25 +134,3 @@ class SearchForm(FlaskForm):
         ]
     )
     submit = SubmitField('Search')
-
-
-class FilterReviewsForm(FlaskForm):
-    """Form for filtering reviews."""
-    
-    min_rating = FloatField(
-        'Minimum Rating',
-        validators=[
-            Optional(),
-            NumberRange(min=1.0, max=5.0)
-        ]
-    )
-    sort_by = SelectField(
-        'Sort By',
-        choices=[
-            ('recent', 'Most Recent'),
-            ('highest', 'Highest Rated'),
-            ('lowest', 'Lowest Rated')
-        ],
-        default='recent'
-    )
-    submit = SubmitField('Filter')

@@ -35,8 +35,9 @@
 
                             <!-- Average Ratings -->
                             {% if city.places %}
-                                {% set total_rating = city.places|map(attribute='get_average_rating')|sum %}
-                                {% set avg_rating = total_rating / city.places|length %}
+                                {% set ns = namespace(total=0) %}
+                                {% for place in city.places %}{% set ns.total = ns.total + place.get_average_rating() %}{% endfor %}
+                                {% set avg_rating = (ns.total / city.places|length)|round(1) %}
                                 {% if avg_rating > 0 %}
                                     <p class="mb-3">
                                         <strong>Community Rating:</strong> 

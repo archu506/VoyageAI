@@ -36,7 +36,7 @@ def plan():
             return redirect(url_for('itinerary.plan'))
 
         # Prepare crowd prediction
-        from services.crowd_predictor import CrowdPredictor
+        from app.services.crowd_predictor import CrowdPredictor
         import datetime
         predictor = CrowdPredictor()
 

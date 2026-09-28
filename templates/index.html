@@ -748,6 +748,7 @@
                 {% if current_user.is_authenticated %}
                     <span class="user-greeting"><i class="fa-regular fa-circle-user" style="font-size: 1.3em;"></i> {{ current_user.username }}</span>
                     <form action="/auth/logout" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-outline"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
                     </form>
                 {% else %}
@@ -793,6 +794,7 @@
                     <p>Configure your perfectly optimized trip</p>
                 </div>
                 <form method="POST" action="/plan">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label for="city"><i class="fa-solid fa-location-dot"></i> Select Destination</label>
                         <select id="city" name="city" required>

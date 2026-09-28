@@ -17,10 +17,26 @@ from models.attraction import City, Attraction
 @login_required
 def plan():
     try:
-        city = request.form["city"].strip().title()
-        days = int(request.form.get("days", 1))
-        crowd_level = int(request.form.get("crowd_level", 50))
-        user_energy = int(request.form.get("energy", 100))
+        city_raw = request.form.get("city", "").strip()
+        if not city_raw:
+            return render_template("result.html", error="City name is required", city="", reviews={}), 400
+        city = city_raw.title()
+
+        try:
+            days = int(request.form.get("days", 1))
+            crowd_level = int(request.form.get("crowd_level", 50))
+            user_energy = int(request.form.get("energy", 100))
+        except (ValueError, TypeError):
+            return render_template("result.html", error="Invalid numeric parameter values", city=city, reviews={}), 400
+
+        if days < 1 or days > 14:
+            return render_template("result.html", error="Days must be between 1 and 14", city=city, reviews={}), 400
+
+        if crowd_level < 0 or crowd_level > 100:
+            return render_template("result.html", error="Crowd level must be between 0 and 100%", city=city, reviews={}), 400
+
+        if user_energy < 1 or user_energy > 100:
+            return render_template("result.html", error="Energy level must be between 1 and 100%", city=city, reviews={}), 400
         
         logger.info(f"Plan request: {city}, {days} days, crowd={crowd_level}%, energy={user_energy}%")
         
@@ -94,13 +110,17 @@ def plan():
         )
 
 @planner_bp.route("/add_review", methods=["POST"])
+@login_required
 def submit_review():
-    city = request.form["city"].strip().title()
-    place = request.form["place"].strip().title()
-    user_name = request.form["user_name"]
-    rating = request.form["rating"]
-    comment = request.form["comment"]
-    print("Saving review:", city, place, user_name, rating, comment)
+    city = request.form.get("city", "").strip().title()
+    place = request.form.get("place", "").strip().title()
+    rating = request.form.get("rating", "5")
+    comment = request.form.get("comment", "").strip()
+    user_name = current_user.username
+    if not city or not place or not comment:
+        flash("All fields are required", "error")
+        return redirect(url_for("planner.reload_plan", city=city or "Jaipur"))
+    logger.info(f"Saving review for {city} / {place} by user {user_name}")
     add_review(city, place, user_name, rating, comment)
     return redirect(url_for("planner.reload_plan", city=city))
 

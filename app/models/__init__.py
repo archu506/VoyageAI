@@ -3,6 +3,7 @@ Database models for Smart Tourism application.
 Uses SQLAlchemy ORM for type-safe queries and relationships.
 """
 
+import patch_sqlalchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy

@@ -235,10 +235,11 @@
             <!-- Preferences Card -->
             <div class="card">
                 <h2>Your Preferences</h2>
-                <form method="POST" action="{{ url_for('auth.save_preferences') }}">
+                <form method="POST" action="{{ url_for('auth.profile') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="pref-item">
                         <label class="pref-label">Energy Level</label>
-                        <input type="range" name="energy" min="1" max="100" value="{{ current_user.energy_level or 50 }}" id="energy-slider">
+                        <input type="range" name="energy_level" min="1" max="100" value="{{ current_user.energy_level or 50 }}" id="energy-slider">
                         <span class="pref-value" id="energy-value">{{ current_user.energy_level or 50 }}%</span>
                     </div>
                     
@@ -298,12 +299,11 @@
                             <div class="trip-card">
                                 <div class="trip-city">{{ trip.city }}</div>
                                 <div class="trip-meta">
-                                    <strong>Planned for:</strong> {{ trip.timestamp.strftime('%B %d, %Y') }}
+                                    <strong>Planned for:</strong> {{ trip.created_at.split('T')[0] if trip.created_at and 'T' in trip.created_at else (trip.created_at if trip.created_at else 'Recently') }}
                                 </div>
                                 <div class="trip-meta">
                                     <strong>Attractions:</strong> 
-                                    {% set attractions = trip.itinerary|list %}
-                                    {{ attractions|length }}
+                                    {{ trip.attractions|length if trip.attractions else 0 }}
                                 </div>
                                 <span class="trip-mood {% if trip.mood == 'Happy' %}mood-happy{% elif trip.mood == 'Neutral' %}mood-neutral{% else %}mood-exhausted{% endif %}">
                                     {{ trip.mood or 'Neutral' }}
@@ -315,7 +315,7 @@
                     <div class="empty-state">
                         <p>📍 No trips planned yet</p>
                         <p style="color: #999; font-size: 1em;">Start by planning your first adventure!</p>
-                        <a href="{{ url_for('reload_plan', city='Jaipur') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">Plan a Trip →</a>
+                        <a href="{{ url_for('planner.reload_plan', city='Jaipur') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">Plan a Trip →</a>
                     </div>
                 {% endif %}
             </div>

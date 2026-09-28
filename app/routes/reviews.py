@@ -143,7 +143,9 @@ def delete_review(review_id):
 @reviews_bp.route('/api/place/<int:place_id>/stats')
 def place_stats(place_id):
     """Get review statistics for a place (API endpoint)."""
-    place = Place.query.get_or_404(place_id)
+    place = Place.query.get(place_id)
+    if not place:
+        return jsonify({'error': 'Not Found'}), 404
     
     return jsonify({
         'place_id': place.id,

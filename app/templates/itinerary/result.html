@@ -30,33 +30,14 @@
                                 <p class="text-capitalize text-muted">{{ weather.description }}</p>
                             </div>
                             <div class="col-6 text-end">
-                                <p>
-                                            <span class="badge bg-info ms-2">Crowd Score: {{ item.crowd_score }}</span>
-                                            <span class="badge 
-                                                {% if 'low' in item.crowd_level %}bg-success
-                                                {% elif 'medium' in item.crowd_level %}bg-warning text-dark
-                                                {% else %}bg-danger
-                                                {% endif %}
-                                                ms-2">
-                                                {{ item.crowd_level|capitalize }}
-                                            </span>
-                                            {% if 'high' in item.crowd_level %}
-                                                <span class="ms-3 text-danger"><i class="fas fa-exclamation-triangle"></i> High crowd! Consider alternatives.</span>
-                                                {% if item.suggestion %}
-                                                    <div class="mt-2 alert alert-warning p-2">
-                                                        <strong>Suggestion:</strong> Visit <span class="fw-bold">{{ item.suggestion }}</span> instead for a better experience.
-                                                    </div>
-                                                {% else %}
-                                                    <div class="mt-2 alert alert-info p-2">
-                                                        <strong>No alternative found nearby.</strong>
-                                                    </div>
-                                                {% endif %}
-                                            {% endif %}
-                        </a>
+                                <p class="text-muted">Humidity: {{ weather.humidity }}%</p>
+                                <p class="text-muted">Feels like: {{ weather.feels_like }}°C</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-                                                    {% for item in places %}
+        </div>
     {% endif %}
 
     <!-- Itinerary -->
@@ -71,22 +52,22 @@
                         <div class="card-body">
                             {% if places %}
                                 <div class="timeline">
-                                    {% for place in places %}
+                                    {% for item in places %}
                                         <div class="timeline-item mb-4">
                                             <div class="d-flex">
                                                 <div class="timeline-marker">
                                                     <i class="fas fa-map-pin"></i>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <h6 class="mb-2">{{ place.name }}</h6>
-                                                    <p class="text-muted small mb-2">{{ place.place_type or 'Attraction' }}</p>
+                                                    <h6 class="mb-2">{{ item.place.name }}</h6>
+                                                    <p class="text-muted small mb-2">{{ item.place.place_type or 'Attraction' }}</p>
                                                     
                                                     <!-- Rating Badge -->
-                                                    {% if place.get_average_rating() > 0 %}
+                                                    {% if item.place.get_average_rating and item.place.get_average_rating() > 0 %}
                                                         <div class="mb-2">
                                                             <span class="badge badge-rating">
-                                                                <i class="fas fa-star"></i> {{ place.get_average_rating() }}/5
-                                                                ({{ place.get_review_count() }} reviews)
+                                                                <i class="fas fa-star"></i> {{ item.place.get_average_rating() }}/5
+                                                                ({{ item.place.get_review_count() }} reviews)
                                                             </span>
                                                         </div>
                                                     {% endif %}
@@ -112,18 +93,20 @@
                                                                 {% endif %}
                                                             {% endif %}
 
-                                                    <a href="{{ url_for('reviews.place_reviews', place_id=place.id) }}" class="btn btn-sm btn-outline-primary">
-                                                        <i class="fas fa-comments"></i> Read Reviews
-                                                    </a>
-                                                    {% if current_user.is_authenticated %}
-                                                        <a href="{{ url_for('reviews.add_review', place_id=place.id) }}" class="btn btn-sm btn-outline-success">
-                                                            <i class="fas fa-pen"></i> Write Review
+                                                    <div class="mt-2">
+                                                        <a href="{{ url_for('reviews.place_reviews', place_id=item.place.id) }}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-comments"></i> Read Reviews
                                                         </a>
-                                                    {% else %}
-                                                        <a href="{{ url_for('auth.login', next=url_for('reviews.add_review', place_id=place.id)) }}" class="btn btn-sm btn-outline-success">
-                                                            <i class="fas fa-pen"></i> Write Review
-                                                        </a>
-                                                    {% endif %}
+                                                        {% if current_user.is_authenticated %}
+                                                            <a href="{{ url_for('reviews.add_review', place_id=item.place.id) }}" class="btn btn-sm btn-outline-success">
+                                                                <i class="fas fa-pen"></i> Write Review
+                                                            </a>
+                                                        {% else %}
+                                                            <a href="{{ url_for('auth.login', next=url_for('reviews.add_review', place_id=item.place.id)) }}" class="btn btn-sm btn-outline-success">
+                                                                <i class="fas fa-pen"></i> Write Review
+                                                            </a>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -152,8 +135,9 @@
                     <p class="mb-2"><strong>Destination:</strong> {{ city_name }}</p>
                     <p class="mb-2"><strong>Duration:</strong> {{ num_days }} days</p>
                     <p class="mb-2"><strong>Total Attractions:</strong> 
-                        {% set total_places = itinerary.values()|map(attribute='__len__')|sum %}
-                        {{ total_places }}
+                        {% set ns = namespace(total=0) %}
+                        {% for day, places in itinerary.items() %}{% set ns.total = ns.total + places|length %}{% endfor %}
+                        {{ ns.total }}
                     </p>
                     <hr>
                     <p class="mb-2"><strong>Crowd Levels:</strong></p>
