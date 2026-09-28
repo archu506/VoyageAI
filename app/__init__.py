@@ -10,12 +10,16 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, f
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
+from flask_wtf.csrf import CSRFProtect
+
 from config import config, Config
 from app.models import db, User
 from app.routes import main_bp
 from app.routes.auth import auth_bp
 from app.routes.itinerary import itinerary_bp
 from app.routes.reviews import reviews_bp
+
+csrf = CSRFProtect()
 
 
 def create_app(config_name=None):
@@ -46,6 +50,7 @@ def create_app(config_name=None):
     
     # Initialize extensions
     db.init_app(app)
+    csrf.init_app(app)
     
     # Initialize Flask-Login
     login_manager = LoginManager()
