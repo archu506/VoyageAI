@@ -17,15 +17,69 @@
                         Member since {{ current_user.created_at.strftime('%B %Y') }}
                     </p>
                     <hr>
-                    <p>
+                    <p class="mb-2">
                         <strong>{{ total_reviews }}</strong><br>
                         <small class="text-muted">Total Reviews</small>
+                    </p>
+                    <p class="mb-0">
+                        <strong>{{ saved_trips|length }}</strong><br>
+                        <small class="text-muted">Saved Trips</small>
                     </p>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-9">
+            <!-- Saved Trips Section -->
+            <div class="card mb-4">
+                <div class="card-header text-white">
+                    <h5 class="mb-0"><i class="fas fa-bookmark"></i> Saved Trips</h5>
+                </div>
+                <div class="card-body">
+                    {% if saved_trips %}
+                        <div class="row">
+                            {% for trip in saved_trips %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100 border-start border-primary border-4 shadow-sm">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="card-title text-primary mb-0"><i class="fas fa-map-marker-alt"></i> {{ trip.city_name }}</h6>
+                                                <span class="badge bg-secondary">{{ trip.num_days }} Day{% if trip.num_days > 1 %}s{% endif %}</span>
+                                            </div>
+                                            <p class="card-text text-muted small mb-2">
+                                                <i class="far fa-calendar-alt"></i> Saved on {{ trip.created_at.strftime('%B %d, %Y') }}
+                                            </p>
+                                            <p class="card-text small mb-2">
+                                                <strong>Attractions:</strong> {{ trip.get_total_attractions() }} planned
+                                            </p>
+                                            {% set itin_dict = trip.get_itinerary_dict() %}
+                                            {% if itin_dict %}
+                                                <div class="bg-light p-2 rounded small">
+                                                    {% for day_name, day_places in itin_dict.items() %}
+                                                        <div class="fw-bold text-dark mt-1">{{ day_name }}:</div>
+                                                        <ul class="mb-0 ps-3">
+                                                            {% for place_item in day_places %}
+                                                                <li>{{ place_item.place_name }} <span class="text-muted">({{ place_item.place_type }})</span></li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0" role="alert">
+                            <i class="fas fa-info-circle"></i> You haven't saved any trips yet.
+                            <a href="{{ url_for('itinerary.plan') }}" class="alert-link">Plan a trip and save it!</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- My Reviews Section -->
             <div class="card">
                 <div class="card-header text-white">
                     <h5 class="mb-0"><i class="fas fa-star"></i> My Reviews</h5>

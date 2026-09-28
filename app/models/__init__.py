@@ -41,7 +41,13 @@ class User(UserMixin, db.Model):
         cascade='all, delete-orphan',
         lazy=True
     )
-    
+    saved_trips = db.relationship(
+        'SavedTrip',
+        backref=db.backref('user', lazy='joined'),
+        cascade='all, delete-orphan',
+        lazy=True
+    )
+
     def set_password(self, password):
         """Hash and set the user's password."""
         self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
@@ -145,3 +151,38 @@ class Review(db.Model):
     
     def __repr__(self):
         return f'<Review user={self.user_id} place={self.place_id} rating={self.rating}>'
+
+
+class SavedTrip(db.Model):
+    """SavedTrip model representing user saved itineraries."""
+
+    __tablename__ = 'saved_trips'
+    __table_args__ = (
+        db.Index('idx_saved_trip_user_id', 'user_id'),
+        db.Index('idx_saved_trip_created_at', 'created_at'),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    city_name = db.Column(db.String(100), nullable=False)
+    num_days = db.Column(db.Integer, nullable=False, default=1)
+    itinerary_data = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def get_itinerary_dict(self):
+        """Safely parse itinerary JSON string."""
+        import json
+        try:
+            return json.loads(self.itinerary_data)
+        except Exception:
+            return {}
+
+    def get_total_attractions(self):
+        """Calculate total number of attractions in the itinerary."""
+        data = self.get_itinerary_dict()
+        if isinstance(data, dict):
+            return sum(len(places) for places in data.values() if isinstance(places, list))
+        return 0
+
+    def __repr__(self):
+        return f'<SavedTrip user={self.user_id} city={self.city_name} days={self.num_days}>'

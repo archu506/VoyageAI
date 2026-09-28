@@ -182,7 +182,22 @@
 
     <!-- Navigation -->
     <div class="text-center mb-4">
-        <a href="{{ url_for('itinerary.plan') }}" class="btn btn-outline-primary">
+        {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('itinerary.save_trip') }}" style="display: inline-block;" class="me-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="city_name" value="{{ city_name }}">
+                <input type="hidden" name="num_days" value="{{ num_days }}">
+                <input type="hidden" name="itinerary_data" value="{{ itinerary_json }}">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-bookmark"></i> Save Trip
+                </button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('auth.login', next=request.url) }}" class="btn btn-outline-success me-2">
+                <i class="fas fa-bookmark"></i> Log in to Save Trip
+            </a>
+        {% endif %}
+        <a href="{{ url_for('itinerary.plan') }}" class="btn btn-outline-primary me-2">
             <i class="fas fa-arrow-left"></i> Plan Another Trip
         </a>
         <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">

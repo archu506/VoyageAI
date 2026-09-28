@@ -5,7 +5,7 @@ Authentication routes blueprint.
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash
-from app.models import db, User
+from app.models import db, User, SavedTrip
 from app.forms import RegistrationForm, LoginForm
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -67,7 +67,7 @@ def login():
         
         flash('Invalid username or password.', 'danger')
     
-    return render_template('auth/login.html', form=form)
+    return render_template('auth/register.html' if False else 'auth/login.html', form=form)
 
 
 @auth_bp.route('/logout')
@@ -82,7 +82,7 @@ def logout():
 @auth_bp.route('/profile')
 @login_required
 def profile():
-    """User profile page showing their reviews."""
+    """User profile page showing their reviews and saved trips."""
     page = request.args.get('page', 1, type=int)
     
     reviews = current_user.reviews
@@ -97,10 +97,14 @@ def profile():
     end = start + items_per_page
     paginated_reviews = reviews[start:end]
     
+    # Fetch saved trips ordered newest first
+    saved_trips = SavedTrip.query.filter_by(user_id=current_user.id).order_by(SavedTrip.created_at.desc()).all()
+
     return render_template(
         'auth/profile.html',
         reviews=paginated_reviews,
         page=page,
         total_pages=(total + items_per_page - 1) // items_per_page,
-        total_reviews=total
+        total_reviews=total,
+        saved_trips=saved_trips
     )
